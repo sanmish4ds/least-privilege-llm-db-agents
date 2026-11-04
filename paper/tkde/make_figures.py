@@ -354,6 +354,11 @@ def bird_fig() -> None:
         num(f"{t}mode", pct(v["mode_refusal_rate"]), "{}")
         num(f"{t}cov", pct(v["key_set_coverage"]), "{}")
         num(f"{t}npa", str(v["protected_aggregate_queries"]), "{}")
+        cats = v.get("single_query_refusals_k3_linear", {})
+        for c in ("rank", "threshold", "weighted", "aggregate", "opaque"):
+            num(f"{t}cat{c}", str(cats.get(c, 0)), "{}")
+        num(f"{t}single", str(sum(cats.values())), "{}")
+        num(f"{t}singleold", str(v.get("single_query_refusals_k3_linear_without_predicate_test", 0)), "{}")
         for m in ("stateless", "linear", "strict"):
             num(f"{t}ref{m}", pct(v["audit"][f"k=3/{m}"]["query_refusal_rate"]), "{}")
             num(f"{t}hit{m}", pct(v["audit"][f"k=3/{m}"]["session_hit_rate"]), "{}")

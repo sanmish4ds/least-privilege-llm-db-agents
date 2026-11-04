@@ -603,8 +603,8 @@
   "audit": {
     "k=2": {
       "stateless": {
-        "benign_query_refusal_rate": 0.0005,
-        "benign_session_hit_rate": 0.005,
+        "benign_query_refusal_rate": 0.0046,
+        "benign_session_hit_rate": 0.05,
         "attack_prevented": {
           "small_cell": 0.87,
           "tracker": 0.0,
@@ -641,8 +641,8 @@
     },
     "k=3": {
       "stateless": {
-        "benign_query_refusal_rate": 0.0023,
-        "benign_session_hit_rate": 0.025,
+        "benign_query_refusal_rate": 0.0064,
+        "benign_session_hit_rate": 0.07,
         "attack_prevented": {
           "small_cell": 1.0,
           "tracker": 0.01,
@@ -679,8 +679,8 @@
     },
     "k=5": {
       "stateless": {
-        "benign_query_refusal_rate": 0.1347,
-        "benign_session_hit_rate": 0.757,
+        "benign_query_refusal_rate": 0.1388,
+        "benign_session_hit_rate": 0.777,
         "attack_prevented": {
           "small_cell": 1.0,
           "tracker": 0.6,

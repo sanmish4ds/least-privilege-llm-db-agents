@@ -310,13 +310,13 @@ class PurposeMonitor:
             used = {f"{q.aliases.get(c.table)}.{c.name.lower()}" for c in agg.find_all(exp.Column)}
             if not isinstance(agg, exp.Count) and not used <= protected:
                 # e.g. SUM(known weight) over the matches: distinct weights decode which entities matched
-                s.refuse = True
+                s.refuse, s.cell_q = True, 1.0       # treated as isolating one entity
                 s.reasons.append(f"refused: {agg.key.upper()} over non-protected values under a predicate on "
                                  + ", ".join(cols) + " (only COUNT or aggregates of the protected column)")
                 return []
         relaxed = _relax(q.tree, set(cols), q.aliases)
         if relaxed is None:
-            s.refuse = True
+            s.refuse, s.cell_q = True, 1.0           # treated as isolating one entity
             s.reasons.append("refused: predicate on protected column " + ", ".join(cols) +
                              " in a shape the audit cannot relax (NOT, CASE, JOIN ON, GROUP BY, ORDER BY, subquery)")
             return []
@@ -330,7 +330,7 @@ class PurposeMonitor:
             sets = None if alias is None else _key_sets(relaxed, alias, key, self.executor, p.dialect,
                                                          grouped=aggregate)
             if sets is None:
-                s.refuse = True
+                s.refuse, s.cell_q = True, 1.0
                 s.reasons.append(f"refused: candidate entities for the predicate on {col} could not be computed")
                 return []
             if not aggregate:
@@ -391,7 +391,7 @@ class PurposeMonitor:
             tables = [t for t in q.aliases.values()]
             repeated = any(tables.count(c.split(".")[0]) > 1 for c in touched)
             if touched and (q.tree is None or q.opaque or repeated):
-                s.refuse = True
+                s.refuse, s.cell_q = True, 1.0       # unauditable: treated as isolating one entity
                 s.reasons.append("refused: query shape cannot be audited (CTE, derived table, set operation "
                                  "or repeated entity table) for " + ", ".join(touched))
                 return self._finish(s)
@@ -411,7 +411,7 @@ class PurposeMonitor:
                                                              grouped=True)
                 if sets is None:
                     if p.fail_closed:
-                        s.refuse = True
+                        s.refuse, s.cell_q = True, 1.0
                         s.reasons.append(f"refused: entity sets for {col} could not be computed")
                         return self._finish(s)
                     continue

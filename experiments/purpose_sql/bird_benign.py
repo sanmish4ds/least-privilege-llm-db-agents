@@ -86,8 +86,11 @@ def run_db(db: str, spec: dict, gold: list[str]) -> dict:
             mode_refused.add(sql)
         if any(m == "agg" and c in spec["protected"] for c, m in q.uses.items()):
             protected_agg.add(sql)
-            mon = PurposeMonitor(make_policy(schema, spec, 1, False), "analytics", executor=run)
-            if mon.check(sql).cell_q > 0:
+            # coverage of the aggregate rewrite alone: the predicate test may refuse first
+            cov_pol = make_policy(schema, spec, 1, False).model_copy(update={"audit_predicates": False})
+            sig = PurposeMonitor(cov_pol, "analytics", executor=run).check(sql)
+            failed = any("cannot be audited" in r or "could not be computed" in r for r in sig.reasons)
+            if sig.cell_q > 0 and not failed:
                 covered.add(sql)
         t0 = time.perf_counter()
         try:
@@ -96,7 +99,30 @@ def run_db(db: str, spec: dict, gold: list[str]) -> dict:
             pass
         exec_ms[sql] = 1000 * (time.perf_counter() - t0)
 
+    # why single queries are refused (fresh session, linear audit, k=3), with and without the predicate test
+    def category(reason: str) -> str:
+        if "cannot relax" in reason:
+            return "rank"           # ORDER BY / GROUP BY / NOT ... on a protected value, e.g. top-1 by amount
+        if "under a predicate" in reason:
+            return "weighted"
+        if reason.startswith("refused: predicate on"):
+            return "threshold"      # answer depends on < k entities' protected values via a filter
+        if "aggregate over" in reason:
+            return "aggregate"
+        return "opaque"             # CTE / derived table / set operation / failed rewrite
+    cats: dict[str, int] = defaultdict(int)
+    without_pred = 0
+    lin3 = make_policy(schema, spec, 3, True)
+    for sql in set(gold) - mode_refused:
+        s = PurposeMonitor(lin3, "analytics", executor=run).check(sql)
+        if s.refuse:
+            cats[category(s.reasons[-1])] += 1
+        old = PurposeMonitor(lin3.model_copy(update={"audit_predicates": False}), "analytics", executor=run)
+        without_pred += old.check(sql).refuse
+
     res = {"n_gold_queries": len(set(gold)), "n_sessions": N_SESSIONS,
+           "single_query_refusals_k3_linear": dict(cats),
+           "single_query_refusals_k3_linear_without_predicate_test": without_pred,
            "mode_refusal_rate": round(len(mode_refused) / len(set(gold)), 3),
            "protected_aggregate_queries": len(protected_agg),
            "key_set_coverage": round(len(covered) / max(1, len(protected_agg)), 3),
