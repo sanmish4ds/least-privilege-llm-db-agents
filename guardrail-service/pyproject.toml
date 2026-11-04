@@ -1,0 +1,26 @@
+[project]
+name = "lp-gateway"
+version = "0.1.0"
+description = "Least-privilege gateway for LLM database agents: task-scoped capabilities and session-level inference control"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2.6",
+  "sqlglot>=25",
+  "pyyaml>=6",
+  "httpx>=0.27",
+  "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+mcp = ["mcp>=2", "psycopg[binary]>=3.2"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["guardrail"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
