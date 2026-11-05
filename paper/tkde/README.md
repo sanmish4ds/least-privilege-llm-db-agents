@@ -31,9 +31,9 @@ LLM responses are cached under `experiments/results/`, so reruns are determinist
 | Length | Regular paper: **12 formatted pages** including abstract, references and biographies; up to 14 subject to Mandatory Overlength Page Charges ($220 per page beyond 12); up to 18 only with EIC approval. Our manuscript: 10 pages before biographies (about 10.5 with them), so no overlength charge | IEEE CS Author resources page (computer.org/publications/author-resources/authors, read 2026-10-18): 12-page Transactions limit, MOPC $220/page. TKDE-specific 12/14/18 rule quoted from the TKDE "Write for Us" page in a Feb-2024 blog; the official TKDE page could not be fetched (JavaScript-rendered). **Check the TKDE page in a browser before submitting.** |
 | Template | IEEE Computer Society journal template | Same sources; `IEEEtran` `compsoc` option used |
 
-## Open items for the authors
+## Open items for the author
 
-1. **Affiliations:** copied from arXiv:2607.19361 (G. R. Naik at Flinders University). The TIFS manuscript lists Torrens University Australia. Confirm which is current.
+1. **Authorship:** sole author (Sanjay Mishra, independent researcher). Earlier drafts listed D. Chukkapalli and G. R. Naik; if they contributed, consider an acknowledgment.
 2. **Declarations:** fill in funding, conflicts of interest, and AI-tool use per IEEE / TKDE policy.
 3. **Overlap with the TIFS manuscript (`paper/v2`):** this paper cites the arXiv CRA paper and does not reuse v2's results. If both are under review at the same time, disclose the related submission in the cover letter.
 4. **API budgets:** Sonnet capability results are complete; the Sonnet injection study stopped on an exhausted credit balance, and Sonnet refused the attacker role (cyber classifier). The OpenAI balance ran out before the gpt-4o adaptive study reached 50 targets. The paper states all of this. qwen3:4b-instruct runs locally, on a 55-task subset.

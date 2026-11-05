@@ -26,16 +26,13 @@
 
 \title{Least-Privilege Data Access for LLM Database Agents: Task-Scoped Capabilities and Session-Level Inference Control}
 
-\author{Sanjay~Mishra,
-        Divya~Chukkapalli,
-        and~Ganesh~R.~Naik%
-\IEEEcompsocitemizethanks{\IEEEcompsocthanksitem S. Mishra and D. Chukkapalli are independent researchers, Raleigh and Apex, NC, USA.\protect\\
-E-mail: sanmish4@icloud.com
-\IEEEcompsocthanksitem G. R. Naik is with the College of Medicine and Public Health, Flinders University, Bedford Park, SA, Australia.}%
+\author{Sanjay~Mishra%
+\IEEEcompsocitemizethanks{\IEEEcompsocthanksitem S. Mishra is an independent researcher, Raleigh, NC, USA.\protect\\
+E-mail: sanmish4@icloud.com}%
 \thanks{Code, benchmark generators and results: \url{https://github.com/sanmish4ds/least-privilege-llm-db-agents}.}}
 
 \markboth{IEEE Transactions on Knowledge and Data Engineering (submitted)}%
-{Mishra \MakeLowercase{\textit{et al.}}: Least-Privilege Data Access for LLM Database Agents}
+{Mishra: Least-Privilege Data Access for LLM Database Agents}
 
 \IEEEtitleabstractindextext{%
 \begin{abstract}
@@ -526,10 +523,10 @@ The next concrete step is to compute entity sets inside the database as hashed b
 We built an MCP gateway that gives each agent task a column-level, mode-aware capability and audits every answer that depends on a protected column against the entity sets of earlier answers. Capabilities removed about nine tenths of the columns an agent could use while execution accuracy changed by between \NdEscs{} and \NdEscm{} points across models, and the audit stopped every scripted and adaptive differencing attack while refusing \Nrefkthreelinear\% of benign generated queries. Teams that connect agents to production databases can deploy it in front of an existing database MCP server without changing either side, and keep exact answers for the queries that do not single anyone out.
 
 \section*{Data and Code Availability}
-Code, prompts, LLM response caches, benchmark generators and result files are in the authors' repository. BIRD is used under its license and not redistributed; the TPC-H-shaped database is synthetic and regenerated from a seed.
+Code, prompts, LLM response caches, benchmark generators and result files are in the author's repository. BIRD is used under its license and not redistributed; the TPC-H-shaped database is synthetic and regenerated from a seed.
 
 \section*{Declarations}
-\textbf{Funding:} [to be completed by the authors]. \textbf{Conflicts of interest:} [to be completed by the authors]. \textbf{Use of AI tools:} [to be completed by the authors, per the journal's policy].
+\textbf{Funding:} [to be completed by the author]. \textbf{Conflicts of interest:} [to be completed by the author]. \textbf{Use of AI tools:} [to be completed by the author, per the journal's policy].
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
