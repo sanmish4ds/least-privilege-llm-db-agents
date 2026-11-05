@@ -74,10 +74,22 @@ R.~K. Surapani, P.~K.~D. Kakitapelli, A.~Morampudi, and P.~Padi,
   ``{Authorization Architectures for Tool-Using AI Agents},'' \emph{arXiv
   preprint arXiv:2609.15906}, 2026.
 
-\bibitem{agentflow2026}
-B.~A. Shivakumar, S.~Priya, and P.~Gao, ``{AgentFlow: A Flow-Centric Policy
-  Language and Framework for Securing LLM Agent Systems},'' \emph{arXiv
-  preprint arXiv:2608.22868}, 2026.
+\bibitem{agenra2026}
+B.~A. Shivakumar, S.~Priya, and P.~Gao, ``{Agenra: A Language and Verified Core
+  for Stateful LLM Agent Authorization},'' \emph{arXiv preprint
+  arXiv:2608.22868}, 2026.
+
+\bibitem{shi2025progent}
+T.~Shi, J.~He, Z.~Wang, H.~Li, L.~Wu, W.~Guo, and D.~Song, ``{Progent: Securing
+  AI Agents with Privilege Control},'' \emph{arXiv preprint arXiv:2504.11703},
+  2025.
+
+\bibitem{debenedetti2026camel}
+E.~Debenedetti, I.~Shumailov, T.~Fan, J.~Hayes, N.~Carlini, D.~Fabian, C.~Kern,
+  C.~Shi, A.~Terzis, and F.~Tramèr, ``{Defeating Prompt Injections by
+  Design},'' in \emph{2026 IEEE Conference on Secure and Trustworthy Machine
+  Learning (SaTML)}.\hskip 1em plus 0.5em minus 0.4em\relax IEEE, 2026, pp.
+  587--618.
 
 \bibitem{russinovich2025crescendo}
 M.~Russinovich, A.~Salem, and R.~Eldan, ``{Great, Now Write an Article About
@@ -121,6 +133,21 @@ A.~Kamra, E.~Terzi, and E.~Bertino, ``{Detecting anomalous access patterns in
   relational databases},'' \emph{The VLDB Journal}, vol.~17, no.~5, pp.
   1063--1077, 2007.
 
+\bibitem{dobkin1979secure}
+D.~Dobkin, A.~K. Jones, and R.~J. Lipton, ``{Secure databases: protection
+  against user influence},'' \emph{ACM Transactions on Database Systems},
+  vol.~4, no.~1, pp. 97--106, 1979.
+
+\bibitem{kleinberg2003boolean}
+J.~Kleinberg, C.~Papadimitriou, and P.~Raghavan, ``{Auditing Boolean
+  attributes},'' \emph{Journal of Computer and System Sciences}, vol.~66,
+  no.~1, pp. 244--253, 2003.
+
+\bibitem{adam1989security}
+N.~R. Adam and J.~C. Worthmann, ``{Security-control methods for statistical
+  databases: a comparative study},'' \emph{ACM Computing Surveys}, vol.~21,
+  no.~4, pp. 515--556, 1989.
+
 \bibitem{dinur2003revealing}
 I.~Dinur and K.~Nissim, ``{Revealing information while preserving privacy},''
   in \emph{Proceedings of the twenty-second ACM SIGMOD-SIGACT-SIGART symposium
@@ -143,6 +170,22 @@ L.~Sweeney, ``{k-anonymity: a model for protecting privacy},''
   \emph{International Journal of Uncertainty, Fuzziness and Knowledge-Based
   Systems}, vol.~10, no.~05, pp. 557--570, 2002.
 
+\bibitem{francis2017diffix}
+P.~Francis, S.~Probst~Eide, and R.~Munz, ``{Diffix: High-Utility Database
+  Anonymization},'' in \emph{Lecture Notes in Computer Science}.\hskip 1em plus
+  0.5em minus 0.4em\relax Springer International Publishing, 2017, pp.
+  141--158.
+
+\bibitem{gadotti2019diffix}
+A.~Gadotti, F.~Houssiau, L.~Rocher, B.~Livshits, and Y.-A. de~Montjoye, ``{When
+  the signal is in the noise: Exploiting Diffix's Sticky Noise},'' \emph{arXiv
+  preprint arXiv:1804.06752}, 2018, in Proc. 28th USENIX Security Symposium,
+  2019.
+
+\bibitem{cohen2020reconstruction}
+A.~Cohen and K.~Nissim, ``{Linear Program Reconstruction in Practice},''
+  \emph{Journal of Privacy and Confidentiality}, vol.~10, no.~1, 2020.
+
 \bibitem{yu2018spider}
 T.~Yu, R.~Zhang, K.~Yang, M.~Yasunaga, D.~Wang, Z.~Li, J.~Ma, I.~Li, Q.~Yao,
   S.~Roman, Z.~Zhang, and D.~Radev, ``{Spider: A Large-Scale Human-Labeled
@@ -156,6 +199,12 @@ J.~Li, B.~Hui, G.~Qu, J.~Yang, B.~Li, B.~Li, B.~Wang, B.~Qin, R.~Cao, R.~Geng,
   N.~Huo, X.~Zhou, C.~Ma, G.~Li, K.~C.~C. Chang, F.~Huang, R.~Cheng, and Y.~Li,
   ``{Can LLM Already Serve as A Database Interface? A BIg Bench for Large-Scale
   Database Grounded Text-to-SQLs},'' \emph{arXiv preprint arXiv:2305.03111},
-  2023.
+  2023, in Advances in Neural Information Processing Systems 36 (NeurIPS 2023),
+  Datasets and Benchmarks Track.
+
+\bibitem{costa2025fides}
+M.~Costa, B.~Köpf, A.~Kolluri, A.~Paverd, M.~Russinovich, A.~Salem, S.~Tople,
+  L.~Wutschitz, and S.~Zanella-Béguelin, ``{Securing AI Agents with
+  Information-Flow Control},'' \emph{arXiv preprint arXiv:2505.23643}, 2025.
 
 \end{thebibliography}
