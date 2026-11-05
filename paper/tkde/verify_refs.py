@@ -40,10 +40,19 @@ REFS = [
     ("jiang2026rbacsql", "arxiv", "2607.22115", "Benchmarking Text-to-SQL under Role-Based Access Control", "single-query RBAC text-to-SQL benchmark"),
     ("dataagents2026", "arxiv", "2606.08661", "Data Agents Under Attack: Vulnerabilities in LLM-Driven Analytical Systems", "attacks on LLM data agents"),
     ("authz2026agents", "arxiv", "2609.15906", "Authorization Architectures for Tool-Using AI Agents", "task-scoped authorization for agents (tool level)"),
-    ("agentflow2026", "arxiv", "2608.22868", "AgentFlow: A Flow-Centric Policy Language and Framework for Securing LLM Agent Systems", "flow policies for agent systems"),
+    ("agenra2026", "arxiv", "2608.22868", "Agenra: A Language and Verified Core for Stateful LLM Agent Authorization", "stateful authorization with consumable authority (formerly titled AgentFlow)"),
     ("chen2025sequential", "arxiv", "2506.10949", "Monitoring Decomposition Attacks in LLMs with Lightweight Sequential Monitors", "cumulative monitoring of decomposed requests"),
     ("russinovich2025crescendo", "arxiv", "2404.01833", "Great, Now Write an Article About That: The Crescendo Multi-Turn LLM Jailbreak Attack", "multi-turn escalation via benign steps"),
     ("rolecond2025", "arxiv", "2510.07642", "Role-Conditioned Refusals: Evaluating Access Control Reasoning in Large Language Models", "LLM reasoning about role-conditioned access"),
+    ("dobkin1979secure", "doi", "10.1145/320064.320068", "Secure databases: protection against user influence", "overlap control delays but does not prevent compromise"),
+    ("adam1989security", "doi", "10.1145/76894.76895", "Security-control methods for statistical databases: a comparative study", "survey of statistical-database controls"),
+    ("kleinberg2003boolean", "doi", "10.1016/S0022-0000(02)00036-3", "Auditing Boolean attributes", "exact auditing is hard even for Boolean values"),
+    ("francis2017diffix", "doi", "10.1007/978-3-319-67280-9_8", "Diffix: High-Utility Database Anonymization", "deployed low-count-filtering SQL proxy"),
+    ("gadotti2019diffix", "arxiv", "1804.06752", "When the Signal is in the Noise: Exploiting Diffix's Sticky Noise", "attribute-inference attack on Diffix"),
+    ("cohen2020reconstruction", "doi", "10.29012/jpc.711", "Linear Program Reconstruction in Practice", "reconstruction attack on Diffix"),
+    ("debenedetti2026camel", "doi", "10.1109/SaTML68715.2026.00040", "Defeating Prompt Injections by Design", "CaMeL: control/data-flow separation with value capabilities"),
+    ("shi2025progent", "arxiv", "2504.11703", "Progent: Securing AI Agents with Privilege Control", "deterministic per-task privilege policies on tool calls"),
+    ("costa2025fides", "arxiv", "2505.23643", "Securing AI Agents with Information-Flow Control", "FIDES: information-flow labels in agent planners"),
     ("mishra2026cra", "arxiv", "2607.19361", "Stateful Guardrails for Multi-Turn LLM Systems: A Conversational Risk Accumulation Framework", "conversation-level CRA signals (authors' prior work)"),
 ]
 
@@ -126,6 +135,8 @@ def from_crossref(key: str, m: dict) -> tuple[str, dict]:
 
 PUBLISHED = {  # peer-reviewed venue, verified against the paper itself or the venue listing
     "2404.01833": "In Proc. 34th USENIX Security Symposium, 2025",
+    "2305.03111": "In Advances in Neural Information Processing Systems 36 (NeurIPS 2023), Datasets and Benchmarks Track",
+    "1804.06752": "In Proc. 28th USENIX Security Symposium, 2019",
     "2506.10949": "In Proc. International Conference on Learning Representations (ICLR), 2026",
     "2406.14545": "In Findings of the Association for Computational Linguistics: NAACL 2025",
 }
