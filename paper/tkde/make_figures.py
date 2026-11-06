@@ -411,6 +411,12 @@ def scaling_table() -> None:
 def dp_numbers() -> None:
     r = load(RES / "purpose_sql" / "dp_baseline.json")
     lines = []
+    au = r.pop("audit_linear_k3")
+    num("dpauditatt", pct(au["tracker_estimate_within_10pct"]), "{}")
+    num("dpauditsure", pct(au["tracker_interval_within_10pct"]), "{}")
+    num("dpauditprior", pct(au["prior_guess_within_10pct"]), "{}")
+    num("dpauditnarrowed", str(au["narrowed_sessions"]), "{}")
+    num("dpauditn", str(au["n_sessions"]), "{}")
     for key, v in r.items():
         e = key.split("=")[1]
         t = {"1": "one", "10": "ten", "100": "hundred"}[e]

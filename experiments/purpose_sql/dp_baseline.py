@@ -13,6 +13,15 @@ Reported per session budget:
                   estimate lands within 10% of the target's true balance
                   (simulated over 200 noise draws per session)
 
+The audit arm (linear audit, k=3) is scored by the same criterion. The attacker
+receives the exact answers the gateway admits; each is the sum of the target
+group's balances (an AVG times the group size, which a COUNT gives). Two linear
+programs bound the target's balance given those sums and the domain [-1000, 10000];
+the attacker's estimate is the midpoint, and the session counts as a success if
+that estimate lies within 10% of the true balance. We also report the share of
+sessions in which the whole feasible interval lies within 10% (a guaranteed hit),
+and, as a reference, how often the midpoint of the domain alone, with no answers, is within 10%.
+
     python experiments/purpose_sql/dp_baseline.py
 """
 from __future__ import annotations
@@ -23,6 +32,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+from scipy.optimize import linprog
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
@@ -30,7 +40,7 @@ sys.path.insert(0, str(ROOT / "guardrail-service"))
 sys.path.insert(0, str(HERE))
 
 import tpch_db as db                                                         # noqa: E402
-from guardrail.purpose import analyze                                        # noqa: E402
+from guardrail.purpose import PurposeMonitor, _key_sets, analyze              # noqa: E402
 from run_eval import load_policy                                             # noqa: E402
 
 OUT = ROOT / "experiments" / "results" / "purpose_sql" / "dp_baseline.json"
@@ -109,7 +119,53 @@ def main() -> None:
                                "n_benign_answers": int(len(e)),
                                "tracker_estimate_within_10pct": round(float(np.mean(hits)), 3)}
         print(eps, res[f"eps={eps:g}"])
+    res["audit_linear_k3"] = audit_arm(con, policy, trackers)
+    print("audit", res["audit_linear_k3"])
     OUT.write_text(json.dumps(res, indent=2))
+
+
+def audit_arm(con, policy, trackers: list[dict]) -> dict:
+    """Bound each tracker target's balance from the exact answers the linear audit (k=3) admits."""
+    pol = policy.model_copy(update={"min_isolation": 3, "linear_audit": True})
+    run = lambda x: con.execute(x).fetchall()                              # noqa: E731
+    bal = dict(con.execute("SELECT c_custkey, c_acctbal FROM customer").fetchall())
+    hits = sure = prior = 0
+    widths = []
+    for s in trackers:
+        mon = PurposeMonitor(pol, s["purpose"], executor=run)
+        sets = []
+        for q in s["queries"]:
+            if mon.check(q["sql"]).refuse or not protected_agg(q["sql"], policy):
+                continue
+            u = analyze(q["sql"], policy)
+            alias = {t: a for a, t in u.aliases.items()}["customer"]
+            sets += [x for x in (_key_sets(u.tree, alias, "c_custkey", run, "sqlite", True) or []) if x]
+        target = _target(s, con)
+        truth = bal[target]
+        ids = sorted(set().union({target}, *sets))
+        col = {k: j for j, k in enumerate(ids)}
+        if sets:
+            A = np.zeros((len(sets), len(ids)))
+            for i, x in enumerate(sets):
+                A[i, [col[k] for k in x]] = 1.0
+            b = A @ np.array([bal[k] for k in ids])
+        else:
+            A, b = None, None
+        c = np.zeros(len(ids))
+        c[col[target]] = 1.0
+        lo = linprog(c, A_eq=A, b_eq=b, bounds=(LO, HI), method="highs").fun
+        hi = -linprog(-c, A_eq=A, b_eq=b, bounds=(LO, HI), method="highs").fun
+        tol = 0.1 * (abs(truth) or 1.0)
+        hits += abs((lo + hi) / 2 - truth) <= tol
+        prior += abs((LO + HI) / 2 - truth) <= tol      # guess from the domain alone, no answers
+        sure += (truth - lo) <= tol and (hi - truth) <= tol
+        widths.append(hi - lo)
+    n = len(trackers)
+    return {"tracker_estimate_within_10pct": round(hits / n, 3),
+            "tracker_interval_within_10pct": round(sure / n, 3),
+            "prior_guess_within_10pct": round(prior / n, 3),
+            "narrowed_sessions": int(sum(w < HI - LO - 1e-6 for w in widths)),
+            "median_interval_width": round(float(np.median(widths)), 2), "n_sessions": n}
 
 
 def _target(s: dict, con) -> int:

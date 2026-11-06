@@ -16,5 +16,13 @@
     "benign_within_5pct": 0.916,
     "n_benign_answers": 83858,
     "tracker_estimate_within_10pct": 0.187
+  },
+  "audit_linear_k3": {
+    "tracker_estimate_within_10pct": 0.115,
+    "tracker_interval_within_10pct": 0.0,
+    "prior_guess_within_10pct": 0.115,
+    "narrowed_sessions": 0,
+    "median_interval_width": 11000.0,
+    "n_sessions": 200
   }
 }
