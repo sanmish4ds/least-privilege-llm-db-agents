@@ -105,6 +105,10 @@ def run_db(db: str, spec: dict, gold: list[str]) -> dict:
             return "rank"           # ORDER BY / GROUP BY / NOT ... on a protected value, e.g. top-1 by amount
         if "under a predicate" in reason:
             return "weighted"
+        if "count entities unequally" in reason:
+            return "fanout"         # join counts an entity several times (fix: COUNT(DISTINCT key))
+        if "over an expression of" in reason:
+            return "expression"     # SUM(CASE ...), SUM(x*y), DISTINCT: weights not auditable
         if reason.startswith("refused: predicate on"):
             return "threshold"      # answer depends on < k entities' protected values via a filter
         if "aggregate over" in reason:

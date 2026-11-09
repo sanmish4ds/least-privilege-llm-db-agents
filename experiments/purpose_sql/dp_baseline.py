@@ -40,7 +40,7 @@ sys.path.insert(0, str(ROOT / "guardrail-service"))
 sys.path.insert(0, str(HERE))
 
 import tpch_db as db                                                         # noqa: E402
-from guardrail.purpose import PurposeMonitor, _key_sets, analyze              # noqa: E402
+from guardrail.purpose import PurposeMonitor, _key_weights, analyze             # noqa: E402
 from run_eval import load_policy                                             # noqa: E402
 
 OUT = ROOT / "experiments" / "results" / "purpose_sql" / "dp_baseline.json"
@@ -139,15 +139,16 @@ def audit_arm(con, policy, trackers: list[dict]) -> dict:
                 continue
             u = analyze(q["sql"], policy)
             alias = {t: a for a, t in u.aliases.items()}["customer"]
-            sets += [x for x in (_key_sets(u.tree, alias, "c_custkey", run, "sqlite", True) or []) if x]
+            sets += [x for x in (_key_weights(u.tree, alias, "c_custkey", run, "sqlite", True) or []) if x]
         target = _target(s, con)
         truth = bal[target]
         ids = sorted(set().union({target}, *sets))
         col = {k: j for j, k in enumerate(ids)}
         if sets:
             A = np.zeros((len(sets), len(ids)))
-            for i, x in enumerate(sets):
-                A[i, [col[k] for k in x]] = 1.0
+            for i, x in enumerate(sets):           # x: entity -> rows it contributes
+                for k, w in x.items():
+                    A[i, col[k]] = float(w)
             b = A @ np.array([bal[k] for k in ids])
         else:
             A, b = None, None

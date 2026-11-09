@@ -134,10 +134,10 @@ def from_crossref(key: str, m: dict) -> tuple[str, dict]:
 
 
 PUBLISHED = {  # peer-reviewed venue, verified against the paper itself or the venue listing
-    "2404.01833": "In Proc. 34th USENIX Security Symposium, 2025",
-    "2305.03111": "In Advances in Neural Information Processing Systems 36 (NeurIPS 2023), Datasets and Benchmarks Track",
-    "1804.06752": "In Proc. 28th USENIX Security Symposium, 2019",
-    "2506.10949": "In Proc. International Conference on Learning Representations (ICLR), 2026",
+    "2404.01833": "In Proc. USENIX Security 2025",
+    "2305.03111": "NeurIPS 2023 Datasets and Benchmarks Track",
+    "1804.06752": "In Proc. USENIX Security 2019",
+    "2506.10949": "In Proc. ICLR 2026",
     "2406.14545": "In Findings of the Association for Computational Linguistics: NAACL 2025",
 }
 

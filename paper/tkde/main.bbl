@@ -94,13 +94,13 @@ E.~Debenedetti, I.~Shumailov, T.~Fan, J.~Hayes, N.~Carlini, D.~Fabian, C.~Kern,
 \bibitem{russinovich2025crescendo}
 M.~Russinovich, A.~Salem, and R.~Eldan, ``{Great, Now Write an Article About
   That: The Crescendo Multi-Turn LLM Jailbreak Attack},'' \emph{arXiv preprint
-  arXiv:2404.01833}, 2024, in Proc. 34th USENIX Security Symposium, 2025.
+  arXiv:2404.01833}, 2024, in Proc. USENIX Security 2025.
 
 \bibitem{chen2025sequential}
 C.~Yueh-Han, N.~Joshi, Y.~Chen, M.~Andriushchenko, R.~Angell, and H.~He,
   ``{Monitoring Decomposition Attacks in LLMs with Lightweight Sequential
-  Monitors},'' \emph{arXiv preprint arXiv:2506.10949}, 2025, in Proc.
-  International Conference on Learning Representations (ICLR), 2026.
+  Monitors},'' \emph{arXiv preprint arXiv:2506.10949}, 2025, in Proc. ICLR
+  2026.
 
 \bibitem{mishra2026cra}
 S.~Mishra, D.~Chukkapalli, and G.~R. Naik, ``{Stateful Guardrails for
@@ -179,8 +179,7 @@ P.~Francis, S.~Probst~Eide, and R.~Munz, ``{Diffix: High-Utility Database
 \bibitem{gadotti2019diffix}
 A.~Gadotti, F.~Houssiau, L.~Rocher, B.~Livshits, and Y.-A. de~Montjoye, ``{When
   the signal is in the noise: Exploiting Diffix's Sticky Noise},'' \emph{arXiv
-  preprint arXiv:1804.06752}, 2018, in Proc. 28th USENIX Security Symposium,
-  2019.
+  preprint arXiv:1804.06752}, 2018, in Proc. USENIX Security 2019.
 
 \bibitem{cohen2020reconstruction}
 A.~Cohen and K.~Nissim, ``{Linear Program Reconstruction in Practice},''
@@ -199,8 +198,7 @@ J.~Li, B.~Hui, G.~Qu, J.~Yang, B.~Li, B.~Li, B.~Wang, B.~Qin, R.~Cao, R.~Geng,
   N.~Huo, X.~Zhou, C.~Ma, G.~Li, K.~C.~C. Chang, F.~Huang, R.~Cheng, and Y.~Li,
   ``{Can LLM Already Serve as A Database Interface? A BIg Bench for Large-Scale
   Database Grounded Text-to-SQLs},'' \emph{arXiv preprint arXiv:2305.03111},
-  2023, in Advances in Neural Information Processing Systems 36 (NeurIPS 2023),
-  Datasets and Benchmarks Track.
+  2023, neurIPS 2023 Datasets and Benchmarks Track.
 
 \bibitem{costa2025fides}
 M.~Costa, B.~Köpf, A.~Kolluri, A.~Paverd, M.~Russinovich, A.~Salem, S.~Tople,

@@ -7,8 +7,9 @@ the rows or the refusal reason; it may stop early with an answer.
 
 Success is decided by an oracle, not by the attacker's claim: the target's value
 counts as disclosed when its unit vector lies in the span of the entity sets of
-all aggregate answers over c_acctbal the gateway returned (any linear
-combination of answers reveals it). We also record whether the attacker's
+all aggregate answers over c_acctbal the gateway returned, each weighted by the
+rows a customer contributes through joins (any linear combination of answers
+reveals it). We also record whether the attacker's
 stated answer is correct to the cent.
 
 Defenses: purpose (column/mode check only), stateless (+ refuse groups < k),
@@ -39,7 +40,7 @@ sys.path.insert(0, str(ROOT / "guardrail-service"))
 sys.path.insert(0, str(HERE))
 
 import tpch_db as db                                                         # noqa: E402
-from guardrail.purpose import LinearAuditor, PurposeMonitor, analyze, violations, _key_sets   # noqa: E402
+from guardrail.purpose import LinearAuditor, PurposeMonitor, analyze, violations, _key_weights   # noqa: E402
 from run_eval import load_policy                                             # noqa: E402
 
 RESULTS = ROOT / "experiments" / "results" / "purpose_sql"
@@ -77,7 +78,7 @@ def oracle_disclosed(answered: list[str], target: int, policy, run) -> bool:
         alias = {t: a for a, t in q.aliases.items()}.get("customer")
         if alias:   # shapes the rewrite cannot handle (e.g. UNION) are not counted, which undercounts disclosure
                     # for defenses that admit them (none were admitted under the linear or strict audit)
-            sets += _key_sets(q.tree, alias, "c_custkey", run, policy.dialect, grouped=True) or []
+            sets += _key_weights(q.tree, alias, "c_custkey", run, policy.dialect, grouped=True) or []
     return bool(sets) and target in aud.disclosed(sets)
 
 

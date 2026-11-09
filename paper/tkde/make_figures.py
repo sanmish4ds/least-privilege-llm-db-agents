@@ -355,7 +355,7 @@ def bird_fig() -> None:
         num(f"{t}cov", pct(v["key_set_coverage"]), "{}")
         num(f"{t}npa", str(v["protected_aggregate_queries"]), "{}")
         cats = v.get("single_query_refusals_k3_linear", {})
-        for c in ("rank", "threshold", "weighted", "aggregate", "opaque"):
+        for c in ("rank", "threshold", "weighted", "fanout", "expression", "aggregate", "opaque"):
             num(f"{t}cat{c}", str(cats.get(c, 0)), "{}")
         num(f"{t}single", str(sum(cats.values())), "{}")
         num(f"{t}singleold", str(v.get("single_query_refusals_k3_linear_without_predicate_test", 0)), "{}")

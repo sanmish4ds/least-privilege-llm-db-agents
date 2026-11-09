@@ -32,7 +32,9 @@ Ozsoyoglu). Pairwise differencing remains the k-anonymity-style check for
 
 Limits of the prototype: CTEs, set operations and correlated subqueries are
 not rewritten; HAVING is dropped from key-set rewrites (groups it would hide
-still count); entities joined several times count once; refusal decisions
+still count); an entity joined to several rows enters an answer with that
+multiplicity, so answers are weighted sums and the audits use the weights
+(Gram-Schmidt on weight vectors, containment of multisets); refusal decisions
 depend on which entities match a query, so a refusal can itself leak
 membership (audits are not simulatable).
 """
@@ -163,12 +165,13 @@ def violations(q: QueryUses, spec: PurposeSpec, policy: PurposePolicy) -> dict[s
     return out
 
 
-def _key_sets(tree: exp.Expression, alias: str, key: str, executor: Executor, dialect: str,
-              grouped: bool) -> list[frozenset]:
-    """Entity keys each output group (or the whole result) is computed from.
+def _key_weights(tree: exp.Expression, alias: str, key: str, executor: Executor, dialect: str,
+                 grouped: bool) -> list[dict] | None:
+    """Per output group (or the whole result): entity key -> number of rows it contributes.
 
-    Returns None when the sets cannot be computed (unsupported shape or a failed
-    rewrite), and [] when the query matches no entity.
+    A SUM over ``customer JOIN orders`` counts each customer once per order, so the answer is a
+    weighted sum of per-entity values; the weights are these row counts. Returns None when they
+    cannot be computed (unsupported shape or a failed rewrite), and [] when nothing matches.
     """
     if not isinstance(tree, exp.Select):
         return None
@@ -184,11 +187,50 @@ def _key_sets(tree: exp.Expression, alias: str, key: str, executor: Executor, di
         rows = executor(q.sql(dialect=dialect))
     except Exception:
         return None
-    sets: dict[tuple, set] = defaultdict(set)
+    groups: dict[tuple, dict] = defaultdict(lambda: defaultdict(int))
     for r in rows:
-        sets[tuple(r[1:])].add(r[0])
-    return [frozenset(s) for s in sets.values() if s]
+        if r[0] is not None:
+            groups[tuple(r[1:])][r[0]] += 1
+    return [dict(g) for g in groups.values() if g]
 
+
+def _key_sets(tree: exp.Expression, alias: str, key: str, executor: Executor, dialect: str,
+              grouped: bool) -> list[frozenset] | None:
+    """Entity keys each output group (or the whole result) is computed from (supports of the weights)."""
+    w = _key_weights(tree, alias, key, executor, dialect, grouped)
+    return None if w is None else [frozenset(g) for g in w]
+
+
+def _weights(x) -> dict:
+    """A weight vector as a dict; a plain set of keys has unit weights."""
+    return dict(x) if isinstance(x, dict) else dict.fromkeys(x, 1)
+
+
+def _isolation(new: list, prior: list) -> int:
+    """Smallest number of entities one answer, or the difference of two nested answers, rests on.
+
+    Answers are weight vectors. ``u`` is nested in ``v`` when u <= v entrywise; then v - u is the
+    answer over the entities where they differ, with those multiplicities.
+    """
+    isolated = min(len(x) for x in new)
+    for a in new:
+        for b in prior:
+            small, big = (a, b) if len(a) <= len(b) else (b, a)
+            if all(big.get(k, 0) >= w for k, w in small.items()):
+                d = sum(1 for k, w in big.items() if w > small.get(k, 0))
+                if d:
+                    isolated = min(isolated, d)
+    return isolated
+
+
+def _bare_argument(agg: exp.Expression, cols: set[str], aliases: dict[str, str]) -> bool:
+    """True if the aggregate's argument is a protected column on its own (casts and parentheses aside)."""
+    if agg.args.get("distinct") or isinstance(agg.this, exp.Distinct):
+        return False                        # SUM(DISTINCT x) collapses equal values: not linear
+    node = agg.this
+    while isinstance(node, (exp.Cast, exp.Paren)):
+        node = node.this
+    return isinstance(node, exp.Column) and f"{aliases.get(node.table)}.{node.name.lower()}" in cols
 
 _ATOMS = (exp.EQ, exp.NEQ, exp.GT, exp.GTE, exp.LT, exp.LTE, exp.Between, exp.In, exp.Like, exp.ILike,
           exp.Is, exp.NullSafeEQ, exp.NullSafeNEQ)
@@ -231,7 +273,7 @@ def _relax(tree: exp.Expression, cols: set[str], aliases: dict[str, str]) -> exp
 
 
 class LinearAuditor:
-    """Orthonormal basis of the answered query-set indicator vectors.
+    """Orthonormal basis of the answered queries' weight vectors (0/1 indicators for plain sets).
 
     Entity i's value is exactly derivable iff the unit vector e_i lies in the
     span, i.e. the i-th diagonal entry of the projection Q Q^T equals 1.
@@ -252,7 +294,9 @@ class LinearAuditor:
 
     def _add(self, Q: np.ndarray, keys) -> np.ndarray:
         v = np.zeros(Q.shape[0])
-        v[[self.index[k] for k in keys]] = 1.0
+        for k, w in _weights(keys).items():
+            v[self.index[k]] = float(w)
+        v /= np.linalg.norm(v) or 1.0
         for _ in range(2):                       # re-orthogonalise for stability
             v = v - Q @ (Q.T @ v)
         n = np.linalg.norm(v)
@@ -282,14 +326,14 @@ class PurposeMonitor:
             raise KeyError(f"unknown purpose {purpose!r}")
         self.policy, self.spec, self.executor = policy, policy.purposes[purpose], executor
         self.seen_violations: dict[str, float] = {}
-        self.agg_sets: dict[str, list[frozenset]] = defaultdict(list)   # entity.protected col -> sets
+        self.agg_sets: dict[str, list[dict]] = defaultdict(list)        # entity.protected col -> weight vectors
         self.linear: dict[str, LinearAuditor] = defaultdict(LinearAuditor)
         self.revealed: dict[str, set] = defaultdict(set)                 # entity table -> keys
-        self.pred_sets: dict[str, list[frozenset]] = defaultdict(list)  # candidate sets of predicate queries
+        self.pred_sets: dict[str, list[dict]] = defaultdict(list)       # candidate sets of predicate queries
         self.pred_linear: dict[str, LinearAuditor] = defaultdict(LinearAuditor)
         self.cell = 0.0
 
-    def _predicate_audit(self, q: QueryUses, s: PurposeSignals) -> list[tuple[str, list[frozenset]]]:
+    def _predicate_audit(self, q: QueryUses, s: PurposeSignals) -> list[tuple[str, list[dict]]]:
         """Audit predicates on protected columns; returns the candidate sets to commit if admitted.
 
         A filter such as ``key = 570 AND balance > x`` makes the answer depend on one entity's
@@ -327,23 +371,27 @@ class PurposeMonitor:
         for col in cols:
             table = col.split(".")[0]
             alias, key = by_table.get(table), p.entities[table]
-            sets = None if alias is None else _key_sets(relaxed, alias, key, self.executor, p.dialect,
-                                                         grouped=aggregate)
+            sets = None if alias is None else _key_weights(relaxed, alias, key, self.executor, p.dialect,
+                                                            grouped=aggregate)
             if sets is None:
                 s.refuse, s.cell_q = True, 1.0
                 s.reasons.append(f"refused: candidate entities for the predicate on {col} could not be computed")
                 return []
             if not aggregate:
-                sets = [frozenset([k]) for k in set().union(*sets)] if sets else []
+                sets = [{k: 1} for k in set().union(*sets)] if sets else []
+            elif not self._distinct_entity_count(q, alias, key):
+                # COUNT(*) over a join counts an entity once per row; unequal multiplicities let the
+                # count decode which candidates matched (3 orders vs 1 + 1), so require equal weights
+                uneven = next((g for g in sets if len(set(g.values())) > 1), None)
+                if uneven is not None:
+                    s.refuse, s.cell_q = True, 1.0
+                    s.reasons.append(f"refused: predicate on {col} over rows that count entities unequally "
+                                     f"(use COUNT(DISTINCT {key}))")
+                    return []
+            sets = [dict.fromkeys(g, 1) for g in sets]
             if not sets:
                 continue
-            isolated = min(len(x) for x in sets)
-            for new in sets:
-                for old in self.pred_sets[col]:
-                    small, big = (new, old) if len(new) <= len(old) else (old, new)
-                    d = len(big) - len(small)
-                    if d and small <= big:
-                        isolated = min(isolated, d)
+            isolated = _isolation(sets, self.pred_sets[col])
             if p.linear_audit and isolated >= p.min_isolation:
                 if len(sets) > p.max_linear_sets:
                     isolated = 0
@@ -357,6 +405,18 @@ class PurposeMonitor:
                 return []
             out.append((col, sets))
         return out
+
+    @staticmethod
+    def _distinct_entity_count(q: QueryUses, alias: str, key: str) -> bool:
+        """True if every aggregate is COUNT(DISTINCT <entity key>): each entity then counts once."""
+        aggs = list(q.tree.find_all(exp.AggFunc))
+        def ok(a):
+            d = a.this
+            if not (isinstance(a, exp.Count) and isinstance(d, exp.Distinct) and len(d.expressions) == 1):
+                return False
+            c = d.expressions[0]
+            return isinstance(c, exp.Column) and c.table == alias and c.name.lower() == key.lower()
+        return bool(aggs) and all(ok(a) for a in aggs)
 
     def _protected_agg(self, q: QueryUses) -> list[str]:
         p = self.policy
@@ -396,7 +456,7 @@ class PurposeMonitor:
                                  "or repeated entity table) for " + ", ".join(touched))
                 return self._finish(s)
 
-        pending: list[tuple[str, list[frozenset]]] = []
+        pending: list[tuple[str, list[dict]]] = []
         if self.executor is not None and q.tree is not None and p.audit_predicates:
             pending = self._predicate_audit(q, s)
             if s.refuse:
@@ -406,9 +466,18 @@ class PurposeMonitor:
             by_table = {t: a for a, t in q.aliases.items()}
             for col in self._protected_agg(q):
                 table = col.split(".")[0]
+                bad = [a for a in q.tree.find_all(exp.AggFunc) if not isinstance(a, exp.Count)
+                       and any(f"{q.aliases.get(c.table)}.{c.name.lower()}" == col for c in a.find_all(exp.Column))
+                       and not _bare_argument(a, {col}, q.aliases)]
+                if bad:
+                    # SUM(x * w), SUM(CASE ...), SUM(DISTINCT x): the answer is not the audited weighted sum
+                    s.refuse, s.cell_q = True, 1.0
+                    s.reasons.append(f"refused: {bad[0].key.upper()} over an expression of {col}; "
+                                     "only the bare column can be audited")
+                    return self._finish(s)
                 alias, key = by_table.get(table), p.entities[table]
-                sets = None if alias is None else _key_sets(q.tree, alias, key, self.executor, p.dialect,
-                                                             grouped=True)
+                sets = None if alias is None else _key_weights(q.tree, alias, key, self.executor, p.dialect,
+                                                                grouped=True)
                 if sets is None:
                     if p.fail_closed:
                         s.refuse, s.cell_q = True, 1.0
@@ -417,15 +486,9 @@ class PurposeMonitor:
                     continue
                 if not sets:
                     continue                     # matches no entity: reveals nothing
-                isolated = min(len(x) for x in sets)
-                s.cell_q = max(s.cell_q, 1.0 / isolated)
+                s.cell_q = max(s.cell_q, 1.0 / min(len(x) for x in sets))
                 prior = self.agg_sets[col]
-                for new in sets:
-                    for old in prior:
-                        small, big = (new, old) if len(new) <= len(old) else (old, new)
-                        d = len(big) - len(small)
-                        if d and small <= big:
-                            isolated = min(isolated, d)
+                isolated = _isolation(sets, prior)
                 exact = []
                 if p.linear_audit and not (p.min_isolation and isolated < p.min_isolation):
                     if len(sets) > p.max_linear_sets:     # too many groups to audit exactly: refuse

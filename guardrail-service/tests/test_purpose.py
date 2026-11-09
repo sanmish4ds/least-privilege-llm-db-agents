@@ -187,3 +187,71 @@ def test_refused_predicate_query_leaves_state_unchanged(run):
     assert m.check("SELECT COUNT(*) FROM customer WHERE c_custkey = 7 AND c_acctbal > 1").refuse
     assert not any(m.pred_sets.values()) and not m.check(
         "SELECT COUNT(*) FROM customer WHERE c_custkey BETWEEN 1 AND 10 AND c_acctbal > 1").refuse
+
+
+# ---- joins: an entity joined to several rows enters an answer with that multiplicity ----
+
+JSCHEMA = {"customer": {"c_custkey": "int", "c_acctbal": "real", "c_seg": "text"},
+           "orders": {"o_orderkey": "int", "o_custkey": "int", "o_month": "int"}}
+
+
+def jpolicy(**kw) -> PurposePolicy:
+    return PurposePolicy.model_validate({
+        "schema": JSCHEMA, "entities": {"customer": "c_custkey"},
+        "sensitivity": {"customer.c_acctbal": 0.8},
+        "purposes": {"finance": {"columns": {
+            "customer.c_acctbal": "agg", "customer.c_seg": "raw", "customer.c_custkey": "filter",
+            "orders.o_orderkey": "filter", "orders.o_custkey": "filter", "orders.o_month": "raw"}}},
+        "min_isolation": 3, **kw})
+
+
+@pytest.fixture
+def jrun():
+    con = sqlite3.connect(":memory:")
+    con.execute("CREATE TABLE customer(c_custkey INT, c_acctbal REAL, c_seg TEXT)")
+    con.execute("CREATE TABLE orders(o_orderkey INT, o_custkey INT, o_month INT)")
+    con.executemany("INSERT INTO customer VALUES (?,?,?)", [(k, 100.0 * k, "A") for k in range(1, 7)])
+    # customer 1 has three orders in month 1; customers 2 and 3 one each
+    con.executemany("INSERT INTO orders VALUES (?,?,?)",
+                    [(1, 1, 1), (2, 1, 1), (3, 1, 1), (4, 2, 1), (5, 3, 1), (6, 4, 2), (7, 5, 2), (8, 6, 2)])
+    return lambda sql: con.execute(sql).fetchall()
+
+
+JOINED = ("SELECT SUM(c.c_acctbal) FROM customer c JOIN orders o ON o.o_custkey = c.c_custkey "
+          "WHERE o.o_month = 1")
+PLAIN = "SELECT SUM(c_acctbal) FROM customer WHERE c_custkey IN (1, 2, 3)"
+
+
+@pytest.mark.parametrize("linear", [False, True])
+def test_join_weighted_sums_are_audited_with_their_multiplicities(jrun, linear):
+    # weights (3,1,1) and (1,1,1): their difference is 2 * x_1, one customer's balance
+    m = PurposeMonitor(jpolicy(linear_audit=linear), "finance", executor=jrun)
+    assert not m.check(JOINED).refuse
+    sig = m.check(PLAIN)
+    assert sig.refuse, sig.reasons
+
+
+def test_join_weighted_sums_refused_in_strict_mode(jrun):
+    m = PurposeMonitor(jpolicy(linear_audit=True, strict_protected=True), "finance", executor=jrun)
+    assert not m.check(PLAIN).refuse
+    assert m.check(JOINED).refuse
+
+
+def test_weighted_count_under_threshold_refused_distinct_count_allowed(jrun):
+    m = PurposeMonitor(jpolicy(linear_audit=True), "finance", executor=jrun)
+    probe = ("SELECT COUNT(*) FROM customer c JOIN orders o ON o.o_custkey = c.c_custkey "
+             "WHERE o.o_month = 1 AND c.c_acctbal > 50")
+    sig = m.check(probe)
+    assert sig.refuse and "unequally" in sig.reasons[-1]
+    ok = probe.replace("COUNT(*)", "COUNT(DISTINCT c.c_custkey)")
+    assert not m.check(ok).refuse
+
+
+@pytest.mark.parametrize("sql", [
+    "SELECT SUM(c_acctbal * 2) FROM customer",
+    "SELECT SUM(DISTINCT c_acctbal) FROM customer",
+    "SELECT AVG(CASE WHEN c_seg = 'A' THEN c_acctbal ELSE 0 END) FROM customer",
+])
+def test_aggregate_of_an_expression_of_the_protected_column_refused(jrun, sql):
+    sig = PurposeMonitor(jpolicy(linear_audit=True), "finance", executor=jrun).check(sql)
+    assert sig.refuse, sig.reasons
