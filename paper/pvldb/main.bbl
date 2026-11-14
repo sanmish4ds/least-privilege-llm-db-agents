@@ -1,0 +1,916 @@
+%%% -*-BibTeX-*-
+%%% Do NOT edit. File created by BibTeX with style
+%%% ACM-Reference-Format-Journals [18-Jan-2012].
+
+\begin{thebibliography}{58}
+
+%%% ====================================================================
+%%% NOTE TO THE USER: you can override these defaults by providing
+%%% customized versions of any of these macros before the \bibliography
+%%% command.  Each of them MUST provide its own final punctuation,
+%%% except for \shownote{}, \showDOI{}, and \showURL{}.  The latter two
+%%% do not use final punctuation, in order to avoid confusing it with
+%%% the Web address.
+%%%
+%%% To suppress output of a particular field, define its macro to expand
+%%% to an empty string, or better, \unskip, like this:
+%%%
+%%% \newcommand{\showDOI}[1]{\unskip}   % LaTeX syntax
+%%%
+%%% \def \showDOI #1{\unskip}           % plain TeX syntax
+%%%
+%%% ====================================================================
+
+\ifx \showCODEN    \undefined \def \showCODEN     #1{\unskip}     \fi
+\ifx \showDOI      \undefined \def \showDOI       #1{#1}\fi
+\ifx \showISBNx    \undefined \def \showISBNx     #1{\unskip}     \fi
+\ifx \showISBNxiii \undefined \def \showISBNxiii  #1{\unskip}     \fi
+\ifx \showISSN     \undefined \def \showISSN      #1{\unskip}     \fi
+\ifx \showLCCN     \undefined \def \showLCCN      #1{\unskip}     \fi
+\ifx \shownote     \undefined \def \shownote      #1{#1}          \fi
+\ifx \showarticletitle \undefined \def \showarticletitle #1{#1}   \fi
+\ifx \showURL      \undefined \def \showURL       {\relax}        \fi
+% The following commands are used for tagged output and should be
+% invisible to TeX
+\providecommand\bibfield[2]{#2}
+\providecommand\bibinfo[2]{#2}
+\providecommand\natexlab[1]{#1}
+\providecommand\showeprint[2][]{arXiv:#2}
+
+\bibitem[\protect\citeauthoryear{Adam and Worthmann}{Adam and
+  Worthmann}{1989}]%
+        {adam1989security}
+\bibfield{author}{\bibinfo{person}{Nabil~R. Adam} {and}
+  \bibinfo{person}{John~C. Worthmann}.} \bibinfo{year}{1989}\natexlab{}.
+\newblock \showarticletitle{{Security-control methods for statistical
+  databases: a comparative study}}.
+\newblock \bibinfo{journal}{\emph{Comput. Surveys}} \bibinfo{volume}{21},
+  \bibinfo{number}{4} (\bibinfo{year}{1989}), \bibinfo{pages}{515--556}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/76894.76895}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Agrawal, Bayardo, Faloutsos, Kiernan, Rantzau,
+  and Srikant}{Agrawal et~al\mbox{.}}{2004}]%
+        {agrawal2004auditing}
+\bibfield{author}{\bibinfo{person}{Rakesh Agrawal}, \bibinfo{person}{Roberto
+  Bayardo}, \bibinfo{person}{Christos Faloutsos}, \bibinfo{person}{Jerry
+  Kiernan}, \bibinfo{person}{Ralf Rantzau}, {and} \bibinfo{person}{Ramakrishnan
+  Srikant}.} \bibinfo{year}{2004}\natexlab{}.
+\newblock \showarticletitle{Auditing Compliance with a {Hippocratic} Database}.
+  In \bibinfo{booktitle}{\emph{Proceedings of the 30th International Conference
+  on Very Large Data Bases (VLDB)}}. \bibinfo{pages}{516--527}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Agrawal, Kiernan, Srikant, and Xu}{Agrawal
+  et~al\mbox{.}}{2002}]%
+        {agrawal2002hippocratic}
+\bibfield{author}{\bibinfo{person}{Rakesh Agrawal}, \bibinfo{person}{Jerry
+  Kiernan}, \bibinfo{person}{Ramakrishnan Srikant}, {and}
+  \bibinfo{person}{Yirong Xu}.} \bibinfo{year}{2002}\natexlab{}.
+\newblock \showarticletitle{{Hippocratic Databases}}. In
+  \bibinfo{booktitle}{\emph{VLDB '02: Proceedings of the 28th International
+  Conference on Very Large Databases}}. \bibinfo{publisher}{Elsevier},
+  \bibinfo{pages}{143--154}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1016/b978-155860869-6/50021-4}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{{Amazon Web Services}}{{Amazon Web
+  Services}}{[n.d.]a}]%
+        {awsdp}
+\bibfield{author}{\bibinfo{person}{{Amazon Web Services}}.}
+  \bibinfo{year}{[n.d.]}\natexlab{a}.
+\newblock \bibinfo{title}{{AWS} Clean Rooms Differential Privacy}.
+\newblock
+  \bibinfo{howpublished}{\url{https://docs.aws.amazon.com/clean-rooms/latest/userguide/differential-privacy.html}}.
+\newblock
+\newblock
+\shownote{AWS Clean Rooms User Guide, accessed November 2026.}
+
+
+\bibitem[\protect\citeauthoryear{{Amazon Web Services}}{{Amazon Web
+  Services}}{[n.d.]b}]%
+        {awsminagg}
+\bibfield{author}{\bibinfo{person}{{Amazon Web Services}}.}
+  \bibinfo{year}{[n.d.]}\natexlab{b}.
+\newblock \bibinfo{title}{Minimum aggregation thresholds}.
+\newblock
+  \bibinfo{howpublished}{\url{https://docs.aws.amazon.com/clean-rooms/latest/userguide/custom-min-agg-thresholds.html}}.
+\newblock
+\newblock
+\shownote{AWS Clean Rooms User Guide, accessed November 2026.}
+
+
+\bibitem[\protect\citeauthoryear{Buneman, Khanna, and Tan}{Buneman
+  et~al\mbox{.}}{2001}]%
+        {buneman2001provenance}
+\bibfield{author}{\bibinfo{person}{Peter Buneman}, \bibinfo{person}{Sanjeev
+  Khanna}, {and} \bibinfo{person}{Wang-Chiew Tan}.}
+  \bibinfo{year}{2001}\natexlab{}.
+\newblock \showarticletitle{Why and Where: A Characterization of Data
+  Provenance}. In \bibinfo{booktitle}{\emph{Database Theory --- ICDT 2001}}.
+  \bibinfo{pages}{316--330}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1007/3-540-44503-X_20}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Byun and Li}{Byun and Li}{2006}]%
+        {byun2008purpose}
+\bibfield{author}{\bibinfo{person}{Ji-Won Byun} {and} \bibinfo{person}{Ninghui
+  Li}.} \bibinfo{year}{2006}\natexlab{}.
+\newblock \showarticletitle{{Purpose based access control for privacy
+  protection in relational database systems}}.
+\newblock \bibinfo{journal}{\emph{The VLDB Journal}} \bibinfo{volume}{17},
+  \bibinfo{number}{4} (\bibinfo{year}{2006}), \bibinfo{pages}{603--619}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1007/s00778-006-0023-0}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Chin and Ozsoyoglu}{Chin and
+  Ozsoyoglu}{1982}]%
+        {chin1982auditing}
+\bibfield{author}{\bibinfo{person}{F.Y. Chin} {and} \bibinfo{person}{G.
+  Ozsoyoglu}.} \bibinfo{year}{1982}\natexlab{}.
+\newblock \showarticletitle{{Auditing and Inference Control in Statistical
+  Databases}}.
+\newblock \bibinfo{journal}{\emph{IEEE Transactions on Software Engineering}}
+  \bibinfo{volume}{SE-8}, \bibinfo{number}{6} (\bibinfo{year}{1982}),
+  \bibinfo{pages}{574--582}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1109/tse.1982.236161}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Cohen and Nissim}{Cohen and Nissim}{2020}]%
+        {cohen2020reconstruction}
+\bibfield{author}{\bibinfo{person}{Aloni Cohen} {and} \bibinfo{person}{Kobbi
+  Nissim}.} \bibinfo{year}{2020}\natexlab{}.
+\newblock \showarticletitle{{Linear Program Reconstruction in Practice}}.
+\newblock \bibinfo{journal}{\emph{Journal of Privacy and Confidentiality}}
+  \bibinfo{volume}{10}, \bibinfo{number}{1} (\bibinfo{year}{2020}).
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.29012/jpc.711}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Costa, Köpf, Kolluri, Paverd, Russinovich,
+  Salem, Tople, Wutschitz, and Zanella-Béguelin}{Costa et~al\mbox{.}}{2025}]%
+        {costa2025fides}
+\bibfield{author}{\bibinfo{person}{Manuel Costa}, \bibinfo{person}{Boris
+  Köpf}, \bibinfo{person}{Aashish Kolluri}, \bibinfo{person}{Andrew Paverd},
+  \bibinfo{person}{Mark Russinovich}, \bibinfo{person}{Ahmed Salem},
+  \bibinfo{person}{Shruti Tople}, \bibinfo{person}{Lukas Wutschitz}, {and}
+  \bibinfo{person}{Santiago Zanella-Béguelin}.}
+  \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{{Securing AI Agents with Information-Flow
+  Control}}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2505.23643}}
+  (\bibinfo{year}{2025}).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Cretu, Houssiau, Cully, and de~Montjoye}{Cretu
+  et~al\mbox{.}}{2022}]%
+        {cretu2022querysnout}
+\bibfield{author}{\bibinfo{person}{Ana-Maria Cretu}, \bibinfo{person}{Florimond
+  Houssiau}, \bibinfo{person}{Antoine Cully}, {and}
+  \bibinfo{person}{Yves-Alexandre de Montjoye}.}
+  \bibinfo{year}{2022}\natexlab{}.
+\newblock \showarticletitle{{QuerySnout}: Automating the Discovery of Attribute
+  Inference Attacks against Query-Based Systems}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the 2022 ACM SIGSAC Conference on
+  Computer and Communications Security}}. \bibinfo{pages}{623--637}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3548606.3560581}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Debenedetti, Shumailov, Fan, Hayes, Carlini,
+  Fabian, Kern, Shi, Terzis, and Tramèr}{Debenedetti et~al\mbox{.}}{2026}]%
+        {debenedetti2026camel}
+\bibfield{author}{\bibinfo{person}{Edoardo Debenedetti}, \bibinfo{person}{Ilia
+  Shumailov}, \bibinfo{person}{Tianqi Fan}, \bibinfo{person}{Jamie Hayes},
+  \bibinfo{person}{Nicholas Carlini}, \bibinfo{person}{Daniel Fabian},
+  \bibinfo{person}{Christoph Kern}, \bibinfo{person}{Chongyang Shi},
+  \bibinfo{person}{Andreas Terzis}, {and} \bibinfo{person}{Florian Tramèr}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{{Defeating Prompt Injections by Design}}. In
+  \bibinfo{booktitle}{\emph{2026 IEEE Conference on Secure and Trustworthy
+  Machine Learning (SaTML)}}. \bibinfo{publisher}{IEEE},
+  \bibinfo{pages}{587--618}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1109/satml68715.2026.00040}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Denning and Denning}{Denning and
+  Denning}{1979}]%
+        {denning1979tracker}
+\bibfield{author}{\bibinfo{person}{Dorothy~E. Denning} {and}
+  \bibinfo{person}{Peter~J. Denning}.} \bibinfo{year}{1979}\natexlab{}.
+\newblock \showarticletitle{{The tracker: a threat to statistical database
+  security}}.
+\newblock \bibinfo{journal}{\emph{ACM Transactions on Database Systems}}
+  \bibinfo{volume}{4}, \bibinfo{number}{1} (\bibinfo{year}{1979}),
+  \bibinfo{pages}{76--96}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/320064.320069}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Dinur and Nissim}{Dinur and Nissim}{2003}]%
+        {dinur2003revealing}
+\bibfield{author}{\bibinfo{person}{Irit Dinur} {and} \bibinfo{person}{Kobbi
+  Nissim}.} \bibinfo{year}{2003}\natexlab{}.
+\newblock \showarticletitle{{Revealing information while preserving privacy}}.
+  In \bibinfo{booktitle}{\emph{Proceedings of the twenty-second ACM
+  SIGMOD-SIGACT-SIGART symposium on Principles of database systems}}.
+  \bibinfo{publisher}{ACM}, \bibinfo{pages}{202--210}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/773153.773173}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Dobkin, Jones, and Lipton}{Dobkin
+  et~al\mbox{.}}{1979}]%
+        {dobkin1979secure}
+\bibfield{author}{\bibinfo{person}{David Dobkin}, \bibinfo{person}{Anita~K.
+  Jones}, {and} \bibinfo{person}{Richard~J. Lipton}.}
+  \bibinfo{year}{1979}\natexlab{}.
+\newblock \showarticletitle{{Secure databases: protection against user
+  influence}}.
+\newblock \bibinfo{journal}{\emph{ACM Transactions on Database Systems}}
+  \bibinfo{volume}{4}, \bibinfo{number}{1} (\bibinfo{year}{1979}),
+  \bibinfo{pages}{97--106}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/320064.320068}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Dwork, McSherry, Nissim, and Smith}{Dwork
+  et~al\mbox{.}}{2006}]%
+        {dwork2006calibrating}
+\bibfield{author}{\bibinfo{person}{Cynthia Dwork}, \bibinfo{person}{Frank
+  McSherry}, \bibinfo{person}{Kobbi Nissim}, {and} \bibinfo{person}{Adam
+  Smith}.} \bibinfo{year}{2006}\natexlab{}.
+\newblock \showarticletitle{{Calibrating Noise to Sensitivity in Private Data
+  Analysis}}. In \bibinfo{booktitle}{\emph{Lecture Notes in Computer Science}}.
+  \bibinfo{publisher}{Springer Berlin Heidelberg}, \bibinfo{pages}{265--284}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1007/11681878_14}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Fei, Jiang, Yang, and Xiao}{Fei
+  et~al\mbox{.}}{2026}]%
+        {jiang2026rbacsql}
+\bibfield{author}{\bibinfo{person}{Yang Fei}, \bibinfo{person}{Yangfan Jiang},
+  \bibinfo{person}{Yin Yang}, {and} \bibinfo{person}{Xiaokui Xiao}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{{Benchmarking Text-to-SQL under Role-Based Access
+  Control}}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2607.22115}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Francis, Probst~Eide, and Munz}{Francis
+  et~al\mbox{.}}{2017}]%
+        {francis2017diffix}
+\bibfield{author}{\bibinfo{person}{Paul Francis}, \bibinfo{person}{Sebastian
+  Probst~Eide}, {and} \bibinfo{person}{Reinhard Munz}.}
+  \bibinfo{year}{2017}\natexlab{}.
+\newblock \showarticletitle{{Diffix: High-Utility Database Anonymization}}. In
+  \bibinfo{booktitle}{\emph{Lecture Notes in Computer Science}}.
+  \bibinfo{publisher}{Springer International Publishing},
+  \bibinfo{pages}{141--158}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1007/978-3-319-67280-9_8}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Gadotti, Houssiau, Rocher, Livshits, and
+  de~Montjoye}{Gadotti et~al\mbox{.}}{2018}]%
+        {gadotti2019diffix}
+\bibfield{author}{\bibinfo{person}{Andrea Gadotti}, \bibinfo{person}{Florimond
+  Houssiau}, \bibinfo{person}{Luc Rocher}, \bibinfo{person}{Benjamin Livshits},
+  {and} \bibinfo{person}{Yves-Alexandre de Montjoye}.}
+  \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{{When the signal is in the noise: Exploiting
+  Diffix's Sticky Noise}}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:1804.06752}}
+  (\bibinfo{year}{2018}).
+\newblock
+\newblock
+\shownote{In Proc. USENIX Security 2019.}
+
+
+\bibitem[\protect\citeauthoryear{{Google Cloud}}{{Google Cloud}}{[n.d.]a}]%
+        {bigqueryrules}
+\bibfield{author}{\bibinfo{person}{{Google Cloud}}.}
+  \bibinfo{year}{[n.d.]}\natexlab{a}.
+\newblock \bibinfo{title}{Restrict data access using analysis rules}.
+\newblock
+  \bibinfo{howpublished}{\url{https://docs.cloud.google.com/bigquery/docs/analysis-rules}}.
+\newblock
+\newblock
+\shownote{BigQuery documentation, accessed November 2026.}
+
+
+\bibitem[\protect\citeauthoryear{{Google Cloud}}{{Google Cloud}}{[n.d.]b}]%
+        {bigquerycleanrooms}
+\bibfield{author}{\bibinfo{person}{{Google Cloud}}.}
+  \bibinfo{year}{[n.d.]}\natexlab{b}.
+\newblock \bibinfo{title}{Share sensitive data with data clean rooms}.
+\newblock
+  \bibinfo{howpublished}{\url{https://docs.cloud.google.com/bigquery/docs/data-clean-rooms}}.
+\newblock
+\newblock
+\shownote{BigQuery documentation, accessed November 2026.}
+
+
+\bibitem[\protect\citeauthoryear{Green, Karvounarakis, and Tannen}{Green
+  et~al\mbox{.}}{2007}]%
+        {green2007provenance}
+\bibfield{author}{\bibinfo{person}{Todd~J. Green}, \bibinfo{person}{Grigoris
+  Karvounarakis}, {and} \bibinfo{person}{Val Tannen}.}
+  \bibinfo{year}{2007}\natexlab{}.
+\newblock \showarticletitle{Provenance Semirings}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the Twenty-Sixth ACM
+  SIGMOD-SIGACT-SIGART Symposium on Principles of Database Systems}}.
+  \bibinfo{pages}{31--40}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/1265530.1265535}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Greshake, Abdelnabi, Mishra, Endres, Holz, and
+  Fritz}{Greshake et~al\mbox{.}}{2023}]%
+        {greshake2023indirect}
+\bibfield{author}{\bibinfo{person}{Kai Greshake}, \bibinfo{person}{Sahar
+  Abdelnabi}, \bibinfo{person}{Shailesh Mishra}, \bibinfo{person}{Christoph
+  Endres}, \bibinfo{person}{Thorsten Holz}, {and} \bibinfo{person}{Mario
+  Fritz}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{{Not What You've Signed Up For: Compromising
+  Real-World LLM-Integrated Applications with Indirect Prompt Injection}}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the 16th ACM Workshop on Artificial
+  Intelligence and Security}}. \bibinfo{publisher}{ACM},
+  \bibinfo{pages}{79--90}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3605764.3623985}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Johnson, Near, and Song}{Johnson
+  et~al\mbox{.}}{2018}]%
+        {johnson2018flex}
+\bibfield{author}{\bibinfo{person}{Noah Johnson}, \bibinfo{person}{Joseph~P.
+  Near}, {and} \bibinfo{person}{Dawn Song}.} \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{{Towards practical differential privacy for SQL
+  queries}}.
+\newblock \bibinfo{journal}{\emph{Proceedings of the VLDB Endowment}}
+  \bibinfo{volume}{11}, \bibinfo{number}{5} (\bibinfo{year}{2018}),
+  \bibinfo{pages}{526--539}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3187009.3177733}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Kamra, Terzi, and Bertino}{Kamra
+  et~al\mbox{.}}{2007}]%
+        {kamra2008detecting}
+\bibfield{author}{\bibinfo{person}{Ashish Kamra}, \bibinfo{person}{Evimaria
+  Terzi}, {and} \bibinfo{person}{Elisa Bertino}.}
+  \bibinfo{year}{2007}\natexlab{}.
+\newblock \showarticletitle{{Detecting anomalous access patterns in relational
+  databases}}.
+\newblock \bibinfo{journal}{\emph{The VLDB Journal}} \bibinfo{volume}{17},
+  \bibinfo{number}{5} (\bibinfo{year}{2007}), \bibinfo{pages}{1063--1077}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1007/s00778-007-0051-4}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Kaushik and Ramamurthy}{Kaushik and
+  Ramamurthy}{2011}]%
+        {kaushik2011auditing}
+\bibfield{author}{\bibinfo{person}{Raghav Kaushik} {and}
+  \bibinfo{person}{Ravishankar Ramamurthy}.} \bibinfo{year}{2011}\natexlab{}.
+\newblock \showarticletitle{Efficient Auditing for Complex {SQL} Queries}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the ACM SIGMOD International
+  Conference on Management of Data}}. \bibinfo{pages}{697--708}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/1989323.1989396}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Kenthapadi, Mishra, and Nissim}{Kenthapadi
+  et~al\mbox{.}}{2005}]%
+        {kenthapadi2005simulatable}
+\bibfield{author}{\bibinfo{person}{Krishnaram Kenthapadi},
+  \bibinfo{person}{Nina Mishra}, {and} \bibinfo{person}{Kobbi Nissim}.}
+  \bibinfo{year}{2005}\natexlab{}.
+\newblock \showarticletitle{{Simulatable auditing}}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the twenty-fourth ACM
+  SIGMOD-SIGACT-SIGART symposium on Principles of database systems}}.
+  \bibinfo{publisher}{ACM}, \bibinfo{pages}{118--127}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/1065167.1065183}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Kleinberg, Papadimitriou, and
+  Raghavan}{Kleinberg et~al\mbox{.}}{2003}]%
+        {kleinberg2003boolean}
+\bibfield{author}{\bibinfo{person}{Jon Kleinberg}, \bibinfo{person}{Christos
+  Papadimitriou}, {and} \bibinfo{person}{Prabhakar Raghavan}.}
+  \bibinfo{year}{2003}\natexlab{}.
+\newblock \showarticletitle{{Auditing Boolean attributes}}.
+\newblock \bibinfo{journal}{\emph{J. Comput. System Sci.}}
+  \bibinfo{volume}{66}, \bibinfo{number}{1} (\bibinfo{year}{2003}),
+  \bibinfo{pages}{244--253}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1016/s0022-0000(02)00036-3}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Lei, Chen, Ye, Cao, Shin, Su, Suo, Gao, Hu,
+  Yin, Zhong, Xiong, Sun, Liu, Wang, and Yu}{Lei et~al\mbox{.}}{2024}]%
+        {lei2024spider2}
+\bibfield{author}{\bibinfo{person}{Fangyu Lei}, \bibinfo{person}{Jixuan Chen},
+  \bibinfo{person}{Yuxiao Ye}, \bibinfo{person}{Ruisheng Cao},
+  \bibinfo{person}{Dongchan Shin}, \bibinfo{person}{Hongjin Su},
+  \bibinfo{person}{Zhaoqing Suo}, \bibinfo{person}{Hongcheng Gao},
+  \bibinfo{person}{Wenjing Hu}, \bibinfo{person}{Pengcheng Yin},
+  \bibinfo{person}{Victor Zhong}, \bibinfo{person}{Caiming Xiong},
+  \bibinfo{person}{Ruoxi Sun}, \bibinfo{person}{Qian Liu},
+  \bibinfo{person}{Sida Wang}, {and} \bibinfo{person}{Tao Yu}.}
+  \bibinfo{year}{2024}\natexlab{}.
+\newblock \bibinfo{title}{{Spider 2.0: Evaluating Language Models on Real-World
+  Enterprise Text-to-SQL Workflows}}.
+\newblock \bibinfo{howpublished}{arXiv:2411.07763}.
+\newblock
+\showeprint[arxiv]{2411.07763}~[cs.CL]
+
+
+\bibitem[\protect\citeauthoryear{Li, Hui, Qu, Yang, Li, Li, Wang, Qin, Cao,
+  Geng, Huo, Zhou, Ma, Li, Chang, Huang, Cheng, and Li}{Li
+  et~al\mbox{.}}{2023}]%
+        {li2023bird}
+\bibfield{author}{\bibinfo{person}{Jinyang Li}, \bibinfo{person}{Binyuan Hui},
+  \bibinfo{person}{Ge Qu}, \bibinfo{person}{Jiaxi Yang},
+  \bibinfo{person}{Binhua Li}, \bibinfo{person}{Bowen Li},
+  \bibinfo{person}{Bailin Wang}, \bibinfo{person}{Bowen Qin},
+  \bibinfo{person}{Rongyu Cao}, \bibinfo{person}{Ruiying Geng},
+  \bibinfo{person}{Nan Huo}, \bibinfo{person}{Xuanhe Zhou},
+  \bibinfo{person}{Chenhao Ma}, \bibinfo{person}{Guoliang Li},
+  \bibinfo{person}{Kevin C.~C. Chang}, \bibinfo{person}{Fei Huang},
+  \bibinfo{person}{Reynold Cheng}, {and} \bibinfo{person}{Yongbin Li}.}
+  \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{{Can LLM Already Serve as A Database Interface? A
+  BIg Bench for Large-Scale Database Grounded Text-to-SQLs}}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2305.03111}}
+  (\bibinfo{year}{2023}).
+\newblock
+\newblock
+\shownote{NeurIPS 2023 Datasets and Benchmarks Track.}
+
+
+\bibitem[\protect\citeauthoryear{Li, Wang, Wang, and Jajodia}{Li
+  et~al\mbox{.}}{2002}]%
+        {li2002interval}
+\bibfield{author}{\bibinfo{person}{Yingjiu Li}, \bibinfo{person}{Lingyu Wang},
+  \bibinfo{person}{X.~Sean Wang}, {and} \bibinfo{person}{Sushil Jajodia}.}
+  \bibinfo{year}{2002}\natexlab{}.
+\newblock \showarticletitle{Auditing Interval-Based Inference}. In
+  \bibinfo{booktitle}{\emph{Advanced Information Systems Engineering (CAiSE)}}
+  \emph{(\bibinfo{series}{Lecture Notes in Computer Science})},
+  Vol.~\bibinfo{volume}{2348}. \bibinfo{pages}{553--568}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1007/3-540-47961-9_38}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Liu, Chen, Zhang, Zhang, Zhang, and Yang}{Liu
+  et~al\mbox{.}}{2026}]%
+        {liu2026safenlidb}
+\bibfield{author}{\bibinfo{person}{Ruiheng Liu}, \bibinfo{person}{XiaoBing
+  Chen}, \bibinfo{person}{Jinyu Zhang}, \bibinfo{person}{Qiongwen Zhang},
+  \bibinfo{person}{Yu Zhang}, {and} \bibinfo{person}{Bailong Yang}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{{SafeNLIDB}: A Privacy-Preserving Safety Alignment
+  Framework for {LLM}-based Natural Language Database Interfaces}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2511.06778}}
+  (\bibinfo{year}{2026}).
+\newblock
+\newblock
+\shownote{AAAI 2026 extended version.}
+
+
+\bibitem[\protect\citeauthoryear{Matsumoto, Takakura, Takagi, and
+  Hasegawa}{Matsumoto et~al\mbox{.}}{2026}]%
+        {matsumoto2026dpsql}
+\bibfield{author}{\bibinfo{person}{Tomoya Matsumoto}, \bibinfo{person}{Shokichi
+  Takakura}, \bibinfo{person}{Shun Takagi}, {and} \bibinfo{person}{Satoshi
+  Hasegawa}.} \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{{DPSQL+}: A Differentially Private {SQL} Library
+  with a Minimum Frequency Rule}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2602.22699}}
+  (\bibinfo{year}{2026}).
+\newblock
+\newblock
+\shownote{Accepted to TPDP 2026.}
+
+
+\bibitem[\protect\citeauthoryear{{Microsoft}}{{Microsoft}}{[n.d.]}]%
+        {msddm}
+\bibfield{author}{\bibinfo{person}{{Microsoft}}.}
+  \bibinfo{year}{[n.d.]}\natexlab{}.
+\newblock \bibinfo{title}{Dynamic Data Masking}.
+\newblock
+  \bibinfo{howpublished}{\url{https://learn.microsoft.com/en-us/sql/relational-databases/security/dynamic-data-masking}}.
+\newblock
+\newblock
+\shownote{SQL Server documentation, accessed November 2026.}
+
+
+\bibitem[\protect\citeauthoryear{Mishra, Chukkapalli, and Naik}{Mishra
+  et~al\mbox{.}}{2026}]%
+        {mishra2026cra}
+\bibfield{author}{\bibinfo{person}{Sanjay Mishra}, \bibinfo{person}{Divya
+  Chukkapalli}, {and} \bibinfo{person}{Ganesh~R. Naik}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{{Stateful Guardrails for Multi-Turn LLM Systems: A
+  Conversational Risk Accumulation Framework}}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2607.19361}}
+  (\bibinfo{year}{2026}).
+\newblock
+\newblock
+\shownote{A journal version is under review. The venue is for the author to
+  confirm.}
+
+
+\bibitem[\protect\citeauthoryear{Motwani, Nabar, and Thomas}{Motwani
+  et~al\mbox{.}}{2008}]%
+        {motwani2008auditing}
+\bibfield{author}{\bibinfo{person}{Rajeev Motwani}, \bibinfo{person}{Shubha~U.
+  Nabar}, {and} \bibinfo{person}{Dilys Thomas}.}
+  \bibinfo{year}{2008}\natexlab{}.
+\newblock \showarticletitle{Auditing {SQL} Queries}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the 24th International Conference on
+  Data Engineering (ICDE)}}. \bibinfo{pages}{287--296}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1109/ICDE.2008.4497437}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Nabar, Kenthapadi, Mishra, and Motwani}{Nabar
+  et~al\mbox{.}}{2008}]%
+        {nabar2008survey}
+\bibfield{author}{\bibinfo{person}{Shubha~U. Nabar},
+  \bibinfo{person}{Krishnaram Kenthapadi}, \bibinfo{person}{Nina Mishra}, {and}
+  \bibinfo{person}{Rajeev Motwani}.} \bibinfo{year}{2008}\natexlab{}.
+\newblock \showarticletitle{A Survey of Query Auditing Techniques for Data
+  Privacy}.
+\newblock In \bibinfo{booktitle}{\emph{Privacy-Preserving Data Mining: Models
+  and Algorithms}}. \bibinfo{publisher}{Springer}, \bibinfo{pages}{415--431}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1007/978-0-387-70992-5_17}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Nabar, Marthi, Kenthapadi, Mishra, and
+  Motwani}{Nabar et~al\mbox{.}}{2006}]%
+        {nabar2006robustness}
+\bibfield{author}{\bibinfo{person}{Shubha~U. Nabar}, \bibinfo{person}{Bhaskara
+  Marthi}, \bibinfo{person}{Krishnaram Kenthapadi}, \bibinfo{person}{Nina
+  Mishra}, {and} \bibinfo{person}{Rajeev Motwani}.}
+  \bibinfo{year}{2006}\natexlab{}.
+\newblock \showarticletitle{Towards Robustness in Query Auditing}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the 32nd International Conference on
+  Very Large Data Bases (VLDB)}}. \bibinfo{pages}{151--162}.
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{{Oracle}}{{Oracle}}{[n.d.]}]%
+        {oracledeepsec}
+\bibfield{author}{\bibinfo{person}{{Oracle}}.}
+  \bibinfo{year}{[n.d.]}\natexlab{}.
+\newblock \bibinfo{title}{Why Choose {Oracle} Deep Data Security}.
+\newblock
+  \bibinfo{howpublished}{\url{https://docs.oracle.com/en/database/oracle/oracle-database/26/ddscg/why-choose-oracle-deep-data-security.html}}.
+\newblock
+\newblock
+\shownote{Oracle AI Database 26ai documentation, accessed November 2026.}
+
+
+\bibitem[\protect\citeauthoryear{Pedro, Castro, Carreira, and Santos}{Pedro
+  et~al\mbox{.}}{2023}]%
+        {pedro2025p2sql}
+\bibfield{author}{\bibinfo{person}{Rodrigo Pedro}, \bibinfo{person}{Daniel
+  Castro}, \bibinfo{person}{Paulo Carreira}, {and} \bibinfo{person}{Nuno
+  Santos}.} \bibinfo{year}{2023}\natexlab{}.
+\newblock \showarticletitle{{From Prompt Injections to SQL Injection Attacks:
+  How Protected is Your LLM-Integrated Web Application?}}
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2308.01990}}
+  (\bibinfo{year}{2023}).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Rizvi, Mendelzon, Sudarshan, and Roy}{Rizvi
+  et~al\mbox{.}}{2004}]%
+        {rizvi2004extending}
+\bibfield{author}{\bibinfo{person}{Shariq Rizvi}, \bibinfo{person}{Alberto
+  Mendelzon}, \bibinfo{person}{S. Sudarshan}, {and} \bibinfo{person}{Prasan
+  Roy}.} \bibinfo{year}{2004}\natexlab{}.
+\newblock \showarticletitle{{Extending query rewriting techniques for
+  fine-grained access control}}. In \bibinfo{booktitle}{\emph{Proceedings of
+  the 2004 ACM SIGMOD international conference on Management of data}}.
+  \bibinfo{publisher}{ACM}, \bibinfo{pages}{551--562}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/1007568.1007631}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Russinovich, Salem, and Eldan}{Russinovich
+  et~al\mbox{.}}{2024}]%
+        {russinovich2025crescendo}
+\bibfield{author}{\bibinfo{person}{Mark Russinovich}, \bibinfo{person}{Ahmed
+  Salem}, {and} \bibinfo{person}{Ronen Eldan}.}
+  \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{{Great, Now Write an Article About That: The
+  Crescendo Multi-Turn LLM Jailbreak Attack}}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2404.01833}}
+  (\bibinfo{year}{2024}).
+\newblock
+\newblock
+\shownote{In Proc. USENIX Security 2025.}
+
+
+\bibitem[\protect\citeauthoryear{Sadia, Chen, and Roy~Chowdhury}{Sadia
+  et~al\mbox{.}}{2026}]%
+        {sadia2026pimento}
+\bibfield{author}{\bibinfo{person}{Mushtari Sadia}, \bibinfo{person}{Ang Chen},
+  {and} \bibinfo{person}{Amrita Roy~Chowdhury}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{{PIMENTO}: A Privacy Framework for Querying Text}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2609.14745}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Sandhu, Coyne, Feinstein, and Youman}{Sandhu
+  et~al\mbox{.}}{1996}]%
+        {sandhu1996rbac}
+\bibfield{author}{\bibinfo{person}{R.S. Sandhu}, \bibinfo{person}{E.J. Coyne},
+  \bibinfo{person}{H.L. Feinstein}, {and} \bibinfo{person}{C.E. Youman}.}
+  \bibinfo{year}{1996}\natexlab{}.
+\newblock \showarticletitle{{Role-based access control models}}.
+\newblock \bibinfo{journal}{\emph{Computer}} \bibinfo{volume}{29},
+  \bibinfo{number}{2} (\bibinfo{year}{1996}), \bibinfo{pages}{38--47}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1109/2.485845}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Shi, He, Wang, Li, Wu, Guo, and Song}{Shi
+  et~al\mbox{.}}{2025}]%
+        {shi2025progent}
+\bibfield{author}{\bibinfo{person}{Tianneng Shi}, \bibinfo{person}{Jingxuan
+  He}, \bibinfo{person}{Zhun Wang}, \bibinfo{person}{Hongwei Li},
+  \bibinfo{person}{Linyu Wu}, \bibinfo{person}{Wenbo Guo}, {and}
+  \bibinfo{person}{Dawn Song}.} \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{{Progent: Securing AI Agents with Privilege
+  Control}}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2504.11703}}
+  (\bibinfo{year}{2025}).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Shivakumar, Priya, and Gao}{Shivakumar
+  et~al\mbox{.}}{2026}]%
+        {agenra2026}
+\bibfield{author}{\bibinfo{person}{Basavesh~Ammanaghatta Shivakumar},
+  \bibinfo{person}{Swarn Priya}, {and} \bibinfo{person}{Peng Gao}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{{Agenra: A Language and Verified Core for Stateful
+  LLM Agent Authorization}}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2608.22868}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{{Snowflake Inc.}}{{Snowflake Inc.}}{[n.d.]a}]%
+        {snowflakeagg}
+\bibfield{author}{\bibinfo{person}{{Snowflake Inc.}}}
+  \bibinfo{year}{[n.d.]}\natexlab{a}.
+\newblock \bibinfo{title}{Aggregation policies}.
+\newblock
+  \bibinfo{howpublished}{\url{https://docs.snowflake.com/en/user-guide/aggregation-policies}}.
+\newblock
+\newblock
+\shownote{Snowflake documentation, accessed November 2026.}
+
+
+\bibitem[\protect\citeauthoryear{{Snowflake Inc.}}{{Snowflake Inc.}}{[n.d.]b}]%
+        {snowflakedp}
+\bibfield{author}{\bibinfo{person}{{Snowflake Inc.}}}
+  \bibinfo{year}{[n.d.]}\natexlab{b}.
+\newblock \bibinfo{title}{Differential privacy in {Snowflake} Data Clean
+  Rooms}.
+\newblock
+  \bibinfo{howpublished}{\url{https://docs.snowflake.com/en/user-guide/cleanrooms/differential-privacy}}.
+\newblock
+\newblock
+\shownote{Snowflake documentation, accessed November 2026.}
+
+
+\bibitem[\protect\citeauthoryear{Song, Liu, Chen, Ren, Zhang, and Yu}{Song
+  et~al\mbox{.}}{2024}]%
+        {song2024securesql}
+\bibfield{author}{\bibinfo{person}{Yanqi Song}, \bibinfo{person}{Ruiheng Liu},
+  \bibinfo{person}{Shu Chen}, \bibinfo{person}{Qianhao Ren},
+  \bibinfo{person}{Yu Zhang}, {and} \bibinfo{person}{Yongqi Yu}.}
+  \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{{SecureSQL}: Evaluating Data Leakage of Large
+  Language Models as Natural Language Interfaces to Databases}. In
+  \bibinfo{booktitle}{\emph{Findings of the Association for Computational
+  Linguistics: EMNLP 2024}}. \bibinfo{pages}{5975--5990}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.18653/v1/2024.findings-emnlp.346}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Stevanoski, Cretu, and de~Montjoye}{Stevanoski
+  et~al\mbox{.}}{2024}]%
+        {stevanoski2024querycheetah}
+\bibfield{author}{\bibinfo{person}{Bozhidar Stevanoski},
+  \bibinfo{person}{Ana-Maria Cretu}, {and} \bibinfo{person}{Yves-Alexandre de
+  Montjoye}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{{QueryCheetah}: Fast Automated Discovery of
+  Attribute Inference Attacks against Query-Based Systems}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the 2024 ACM SIGSAC Conference on
+  Computer and Communications Security}}. \bibinfo{pages}{3451--3465}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1145/3658644.3690272}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Surapani, Kakitapelli, Morampudi, and
+  Padi}{Surapani et~al\mbox{.}}{2026}]%
+        {authz2026agents}
+\bibfield{author}{\bibinfo{person}{Rakesh~Kumar Surapani},
+  \bibinfo{person}{Pradeep Kumar~Dolabehera Kakitapelli}, \bibinfo{person}{Arun
+  Morampudi}, {and} \bibinfo{person}{Praveena Padi}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{{Authorization Architectures for Tool-Using AI
+  Agents}}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2609.15906}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Sweeney}{Sweeney}{2002}]%
+        {sweeney2002kanonymity}
+\bibfield{author}{\bibinfo{person}{Latanya Sweeney}.}
+  \bibinfo{year}{2002}\natexlab{}.
+\newblock \showarticletitle{{k-anonymity: a model for protecting privacy}}.
+\newblock \bibinfo{journal}{\emph{International Journal of Uncertainty,
+  Fuzziness and Knowledge-Based Systems}} \bibinfo{volume}{10},
+  \bibinfo{number}{05} (\bibinfo{year}{2002}), \bibinfo{pages}{557--570}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1142/s0218488502001648}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Tillmann and Pfetsch}{Tillmann and
+  Pfetsch}{2014}]%
+        {tillmann2014complexity}
+\bibfield{author}{\bibinfo{person}{Andreas~M. Tillmann} {and}
+  \bibinfo{person}{Marc~E. Pfetsch}.} \bibinfo{year}{2014}\natexlab{}.
+\newblock \showarticletitle{The Computational Complexity of the Restricted
+  Isometry Property, the Nullspace Property, and Related Concepts in Compressed
+  Sensing}.
+\newblock \bibinfo{journal}{\emph{IEEE Transactions on Information Theory}}
+  \bibinfo{volume}{60}, \bibinfo{number}{2} (\bibinfo{year}{2014}),
+  \bibinfo{pages}{1248--1259}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.1109/TIT.2013.2290112}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Wang, Wang, Lv, Li, Li, Cong, and Dong}{Wang
+  et~al\mbox{.}}{2026}]%
+        {dataagents2026}
+\bibfield{author}{\bibinfo{person}{Kuncan Wang}, \bibinfo{person}{Ziting Wang},
+  \bibinfo{person}{Peizhuo Lv}, \bibinfo{person}{Haoyang Li},
+  \bibinfo{person}{Guoliang Li}, \bibinfo{person}{Gao Cong}, {and}
+  \bibinfo{person}{Wei Dong}.} \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{{Data Agents Under Attack: Vulnerabilities in
+  LLM-Driven Analytical Systems}}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2606.08661}}
+  (\bibinfo{year}{2026}).
+\newblock
+
+
+\bibitem[\protect\citeauthoryear{Wu}{Wu}{2026}]%
+        {wu2026factgate}
+\bibfield{author}{\bibinfo{person}{Minmin Wu}.}
+  \bibinfo{year}{2026}\natexlab{}.
+\newblock \showarticletitle{{FactGate}: A Task-Scoped Data Gateway for {AI}
+  Agents with Cumulative Exposure Accounting}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2607.00751}}
+  (\bibinfo{year}{2026}).
+\newblock
+\newblock
+\shownote{Version 2. Version 1 was titled SessionBound.}
+
+
+\bibitem[\protect\citeauthoryear{Yu, Zhang, Yang, Yasunaga, Wang, Li, Ma, Li,
+  Yao, Roman, Zhang, and Radev}{Yu et~al\mbox{.}}{2018}]%
+        {yu2018spider}
+\bibfield{author}{\bibinfo{person}{Tao Yu}, \bibinfo{person}{Rui Zhang},
+  \bibinfo{person}{Kai Yang}, \bibinfo{person}{Michihiro Yasunaga},
+  \bibinfo{person}{Dongxu Wang}, \bibinfo{person}{Zifan Li},
+  \bibinfo{person}{James Ma}, \bibinfo{person}{Irene Li},
+  \bibinfo{person}{Qingning Yao}, \bibinfo{person}{Shanelle Roman},
+  \bibinfo{person}{Zilin Zhang}, {and} \bibinfo{person}{Dragomir Radev}.}
+  \bibinfo{year}{2018}\natexlab{}.
+\newblock \showarticletitle{{Spider: A Large-Scale Human-Labeled Dataset for
+  Complex and Cross-Domain Semantic Parsing and Text-to-SQL Task}}. In
+  \bibinfo{booktitle}{\emph{Proceedings of the 2018 Conference on Empirical
+  Methods in Natural Language Processing}}. \bibinfo{publisher}{Association for
+  Computational Linguistics}, \bibinfo{pages}{3911--3921}.
+\newblock
+\urldef\tempurl%
+\url{https://doi.org/10.18653/v1/d18-1425}
+\showDOI{\tempurl}
+
+
+\bibitem[\protect\citeauthoryear{Yueh-Han, Joshi, Chen, Andriushchenko, Angell,
+  and He}{Yueh-Han et~al\mbox{.}}{2025}]%
+        {chen2025sequential}
+\bibfield{author}{\bibinfo{person}{Chen Yueh-Han}, \bibinfo{person}{Nitish
+  Joshi}, \bibinfo{person}{Yulin Chen}, \bibinfo{person}{Maksym
+  Andriushchenko}, \bibinfo{person}{Rico Angell}, {and} \bibinfo{person}{He
+  He}.} \bibinfo{year}{2025}\natexlab{}.
+\newblock \showarticletitle{{Monitoring Decomposition Attacks in LLMs with
+  Lightweight Sequential Monitors}}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2506.10949}}
+  (\bibinfo{year}{2025}).
+\newblock
+\newblock
+\shownote{In Proc. ICLR 2026.}
+
+
+\bibitem[\protect\citeauthoryear{Đorđe Klisura and Rios}{Đorđe Klisura and
+  Rios}{2024}]%
+        {klisura2025schema}
+\bibfield{author}{\bibinfo{person}{Đorđe Klisura} {and}
+  \bibinfo{person}{Anthony Rios}.} \bibinfo{year}{2024}\natexlab{}.
+\newblock \showarticletitle{{Unmasking Database Vulnerabilities: Zero-Knowledge
+  Schema Inference Attacks in Text-to-SQL Systems}}.
+\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2406.14545}}
+  (\bibinfo{year}{2024}).
+\newblock
+\newblock
+\shownote{In Findings of the Association for Computational Linguistics: NAACL
+  2025.}
+
+
+\end{thebibliography}
