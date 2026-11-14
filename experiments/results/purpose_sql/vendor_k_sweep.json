@@ -1,0 +1,15 @@
+{
+ "executed": false,
+ "reason": "A vendor query can cost money. No connection was opened.",
+ "k": [
+  3,
+  5,
+  10
+ ],
+ "sql_template": "-- Minimum group size, one query at a time, on a synthetic customer table the\n-- author loads. Not a measurement of Snowflake or BigQuery until it is run there.\nSELECT COUNT(*) AS n, SUM(c_acctbal) AS total\nFROM customer\nWHERE c_nationkey = :nation AND c_mktsegment = :segment\nHAVING COUNT(*) >= :k;",
+ "commands_for_the_author": {
+  "snowflake": "SNOWFLAKE_ACCOUNT=... python experiments/purpose_sql/vendor_k_sweep.py --execute snowflake",
+  "bigquery": "BIGQUERY_PROJECT=... python experiments/purpose_sql/vendor_k_sweep.py --execute bigquery"
+ },
+ "estimated_cost_usd": "under a dollar on an X-Small warehouse or 10 GB of BigQuery on-demand if the table is the 1,500-row synthetic customer table and each k runs a few dozen queries; confirm the price sheet before running."
+}

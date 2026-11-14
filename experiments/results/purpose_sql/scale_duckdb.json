@@ -1,0 +1,45 @@
+{
+ "latency": {
+  "customers": 1000000,
+  "cell_count_distinct_in_db": {
+   "median_ms": 2.951,
+   "min_ms": 2.66
+  },
+  "aggregated_key_weights_in_db": {
+   "median_ms": 9.419,
+   "min_ms": 8.38
+  },
+  "join_key_weights_in_db": {
+   "median_ms": 14.161,
+   "min_ms": 12.97
+  },
+  "ship_every_matching_key": {
+   "median_ms": 5.973,
+   "min_ms": 5.69
+  },
+  "rows_in_nation_7": 40000
+ },
+ "history": {
+  "queries": 1000,
+  "customers": 1000000,
+  "final_rank": 1000,
+  "basis_rows": 1000,
+  "median_total_ms": 1.019,
+  "p95_total_ms": 1.304,
+  "p99_total_ms": 1.477,
+  "max_total_ms": 3.708,
+  "checks_over_1s": 0,
+  "median_fetch_ms": 0.748,
+  "median_rank_ms": 0.263,
+  "p95_rank_ms": 0.464,
+  "max_rank_ms": 0.872
+ },
+ "concurrent": {
+  "sessions": 8,
+  "queries_each": 50,
+  "customers_each": 200000,
+  "per_session_mean_check_ms": 4.604,
+  "wall_seconds": 0.296
+ },
+ "machine_note": "DuckDB in process, Linux VM, single host. Not a warehouse."
+}

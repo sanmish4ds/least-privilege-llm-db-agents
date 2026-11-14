@@ -1,0 +1,64 @@
+\documentclass[sigconf, nonacm]{acmart}
+\usepackage{pvldb}
+\usepackage{booktabs}
+\renewcommand\vldbdoi{XX.XX/XXX.XX}
+\renewcommand\vldbpages{XXX-XXX}
+\renewcommand\vldbavailabilityurl{https://github.com/sanmish4ds/least-privilege-llm-db-agents}
+\renewcommand\vldbpagestyle{plain}
+\input{numbers.tex}
+
+\begin{document}
+\title{Session-Level Inference Control for LLM Agents on Analytical Databases\\Appendix}
+
+\author{Sanjay Mishra}
+\affiliation{%
+  \institution{Independent researcher}
+  \city{Raleigh}
+  \state{North Carolina}
+  \country{USA}}
+\email{sanmish4@icloud.com}
+
+\begin{abstract}
+Online appendix to the PVLDB submission. It records the commands that regenerate the new measurements, the overlap with the author's conversational-risk manuscript, and the experiments that were not run.
+\end{abstract}
+
+\maketitle
+\vldbtopmatter
+
+\section{What this revision ran}
+
+All of the following are local. None calls a paid model or a warehouse.
+
+\begin{sloppypar}
+The new scripts are the tolerance check, the attack search, the DuckDB scale run, the Laplace-plus-minimum-count baseline, and the vendor script that refuses to connect. \texttt{make\_numbers.py} writes the macros.
+\end{sloppypar}
+
+\begin{sloppypar}
+The finance table for $k{=}3$ and $k{=}10$ uses the same loop as the existing audit evaluation, extended to $k{=}10$. The $k{=}3$ row matches the previously committed rates. The two-customer sum is a separate one-query probe.
+\end{sloppypar}
+
+\section{Overlap with the conversational-risk manuscript}
+
+\begin{sloppypar}
+The arXiv paper 2607.19361, ``Stateful Guardrails for Multi-Turn LLM Systems,'' studies dialogue. It scores semantic drift, a graph of entities mentioned in the text, and a compliance gradient. Its benchmarks are synthetic multi-turn conversations.
+\end{sloppypar}
+
+This paper studies SQL answers. The session state is the weight vector of entities behind an aggregate, not the text of the dialogue. The shared idea is that a score accumulated over a session can be confounded with length, which is why the finance sessions are length-matched in the earlier TKDE draft and why this paper refuses a query instead of alarming on session length.
+
+\begin{sloppypar}
+No table, figure, or paragraph from arXiv:2607.19361 is copied here. The TKDE readme calls the journal version a TIFS manuscript. That draft is not in this repository. The review asked for a TDSC citation. The bibliography entry records the conflict and asks the author to confirm the venue.
+\end{sloppypar}
+
+\section{Not run}
+
+\begin{itemize}
+\item A local open-weight attacker with a budget of 100 queries. No Ollama server was listening. The harness refuses to fall back to a paid API.
+\item Snowflake and BigQuery at $k{=}3,5,10$. \texttt{vendor\_k\_sweep.py} exits before opening a connection.
+\item OpenDP and Tumult Analytics. The minimum-group baseline is our own Laplace code.
+\item Spider 2.0. There is no agent-numbers file in the repository.
+\item A second BIRD audit log. Only one committed log exists.
+\end{itemize}
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+\end{document}

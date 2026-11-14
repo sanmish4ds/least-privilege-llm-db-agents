@@ -1,0 +1,258 @@
+\documentclass[sigconf, nonacm]{acmart}
+
+%%% do not modify the following VLDB block %%
+%%% VLDB block start %%%
+\usepackage{pvldb}
+\usepackage{booktabs}
+%%% VLDB block end %%%
+
+\renewcommand\vldbdoi{XX.XX/XXX.XX}
+\renewcommand\vldbpages{XXX-XXX}
+\renewcommand\vldbavailabilityurl{https://github.com/sanmish4ds/least-privilege-llm-db-agents}
+\renewcommand\vldbpagestyle{plain}
+
+\input{numbers.tex}
+\makeatletter\newcommand{\tabinput}[1]{\@@input #1 }\makeatother
+
+\begin{document}
+
+\title{Session-Level Inference Control for LLM Agents on Analytical Databases}
+
+\author{Sanjay Mishra}
+\affiliation{%
+  \institution{Independent researcher}
+  \city{Raleigh}
+  \state{North Carolina}
+  \country{USA}}
+\email{sanmish4@icloud.com}
+
+\begin{abstract}
+An analytical agent can recover one person's value from aggregates that each look large enough for a per-query minimum group size. This paper audits the session. Before a query runs, the gateway rewrites it to the weighted set of entities behind each answer that depends on a protected column and refuses the query that would make one entity's value an exact linear combination of answers already returned. The guarantee is exact recovery of one identity on one static snapshot. It is not an interval guarantee, and a sum of two balances is not counted as either balance.
+
+The audit does not cost the same as per-query suppression. On the finance sessions at $k{=}3$, suppression refuses \Nkthreestatelessq\% of benign queries and \Nkthreestatelesss\% of benign sessions; the linear audit refuses \Nkthreelinearq\% and \Nkthreelinears\%, and it stops the scripted two- and three-query differencing attacks that suppression does not. A portfolio of at most \Nsearchbudget{} queries against \Nsearchn{} targets recovered every target from suppression and from nested-pair auditing, and recovered none from the linear audit (Wilson upper bound \Nsearchwilson\%). With no minimum group size, a sum of two customers matched the sum of the two balances in \Npairnonesum{} of \Npairn{} fresh sessions and determined neither balance. At $k{=}3$ that query is refused. Differential privacy is a complement, not a substitute: it bounds every release and does not return exact answers. A rank test over the rationals agrees with the $10^{-9}$ floating-point test on the weights in these workloads and catches a disclosure that the floating-point test misses when multiplicities are near $10^{9}$.
+\end{abstract}
+
+\maketitle
+
+%%% VLDB block start %%%
+\vldbtopmatter
+%%% VLDB block end %%%
+
+\section{Introduction}
+
+A reporting role will answer two averages that each cover dozens of customers. Subtracting them yields the one customer in the difference. Wang et al.\ name this failure V8, lack of compositional leakage control: policies that approve each query in isolation do not track what the answers reveal together~\cite{wang2026dataagents}. Classical statistical databases called the same pattern a tracker~\cite{denning1979tracker} and tested it with linear algebra~\cite{chin1982auditing}. Those audits were not built for an agent that reads a refusal and rewrites the query, and a per-query minimum group size does not implement them.
+
+This paper is a defense for that compositional channel. A gateway in front of the agent's SQL tool keeps, for each protected column, the weight vector of every admitted answer. A join contributes a weight equal to the number of rows an entity adds, which is the integer coefficient in the provenance polynomial of the aggregate~\cite{green2007provenance,buneman2001provenance}. The gateway refuses the query that would put some entity's unit vector in the span. The decision is about one identity, one column, and one static snapshot. It does not promise that a value stays inside a wide interval, that a sum of several people stays hidden, or that a later update of the table is covered.
+
+The contributions are narrower than a first measurement of warehouse controls.
+\begin{enumerate}
+\item A session audit for exact linear disclosure of one protected value, including join weights and a rational rank test. Native Snowflake and BigQuery controls were not measured here, so this is not a claim about them.
+\item A finance-session measurement of the benign cost. At $k{=}3$ the linear audit refuses more benign queries and more benign sessions than per-query suppression. At $k{=}10$ the query-refusal rates coincide and the attacks prevented do not.
+\item A \Nsearchn{}-target query portfolio, with no language model, on which suppression and nested-pair auditing fail and the linear audit admits no exact recovery. A two-customer sum, when answered, reveals the sum and not either customer.
+\item A differential-privacy baseline with a minimum group size, reported as complementary to the audit, and an account of which model played which role in the cached agent studies.
+\end{enumerate}
+
+\section{Related Work}
+
+Table~\ref{tab:position} places the closest lines. The distinction that matters for V8 is whether a decision may depend on answers already returned, and whether the thing protected is one numeric value or a budget of rows.
+
+Wang et al.\ study data agents and list eight vulnerabilities~\cite{wang2026dataagents}. V8 is not a single-query bug. Their wording is that policies may approve each query alone and still leak through a sequence of aggregates. This paper takes that channel as the object of the defense. SecureSQL measures how much text-to-SQL models leak when they are the interface~\cite{song2024securesql}. SafeNLIDB trains an alignment layer for natural-language database interfaces and reports that rule filters and agent filters struggle with inference attacks~\cite{liu2026safenlidb}. Neither audits the linear span of SQL answers. PIMENTO grounds text, queries, and policies into a relational substrate so contextual integrity and differential privacy can be enforced on unstructured text~\cite{sadia2026pimento}; it is not a session audit of warehouse aggregates.
+
+FactGate, whose first draft was titled SessionBound, turns an approved task into set-valued budgets over declared facts and accounts for them on one PostgreSQL snapshot~\cite{wu2026factgate}. The authors state that inference from answered or refused predicates is not bounded. Our guarantee is the complementary statement: exact linear disclosure of one numeric attribute is refused, and row-count budgets are not what we account.
+
+QuerySnout and QueryCheetah search for attribute-inference attacks against query-based systems~\cite{cretu2022querysnout,stevanoski2024querycheetah}. The portfolio in Section~\ref{sec:search} is much smaller. It includes the tracker patterns those lines of work made routine, plus greedy range splits and a mutation loop. It is not their evolutionary search, and it does not claim to have discovered a new query shape. The three-query overlap was put in the portfolio because nested-pair auditing is known to miss it~\cite{chin1982auditing}.
+
+Differential privacy replaces exact answers with noise~\cite{dwork2006calibrating} and has been engineered for SQL~\cite{johnson2018flex}. DPSQL+ adds a minimum-frequency rule, a static SQL validator, and a privacy accountant on top of user-level differential privacy~\cite{matsumoto2026dpsql}. Section~\ref{sec:dp} is not a run of that library. It is a Laplace mechanism whose noisy count must clear $k$ before a noisy sum is released, with basic composition. The audit and that mechanism answer different questions.
+
+The rewrite that recovers the entities behind an aggregate is why-provenance, specialized to a weighted sum~\cite{buneman2001provenance,green2007provenance,cheney2009provenance}. We use the weights only to decide refusal. We do not return a provenance explanation to the agent.
+
+Our earlier conversational risk scores track dialogue, not SQL answers~\cite{mishra2026cra}. A journal version of that work is under review~\cite{mishra2026tdsc}. The overlap is the lesson that a session score can confound length with risk, and the use of stateful guardrails as a baseline. The SQL benchmark, the entity-set audit, and the numbers in this paper are not in that work. The repository note calls the journal manuscript a TIFS submission; this revision was asked to record it as TDSC. The venue should be confirmed before camera-ready. No text or table from that manuscript is copied here.
+
+\begin{table}[t]
+\caption{What each line decides on. \emph{Session}: earlier answers can change the decision. \emph{Exact}: an admitted numeric answer is exact. V8 is an attack surface, not a defense.}
+\label{tab:position}
+\centering\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Line & Session & Exact value & Object \\
+\midrule
+Per-query minimum group & no & yes & group size \\
+Audit expert~\cite{chin1982auditing} & yes & yes & linear span \\
+DPSQL+~\cite{matsumoto2026dpsql} & accountant & no & DP and frequency \\
+FactGate~\cite{wu2026factgate} & set budgets & yes & declared facts \\
+SafeNLIDB~\cite{liu2026safenlidb} & alignment & yes & NL interface \\
+V8~\cite{wang2026dataagents} & the gap & -- & compositional leak \\
+\textbf{This audit} & yes & yes & one identity \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{The Audit and Its Scope}
+\label{sec:audit}
+
+A protected column may be aggregated and may not be returned raw. For an admitted aggregate the gateway drops the aggregate, keeps the predicates and the grouping, and runs that key-only query. Each output group becomes a vector $w$ whose coordinate $w_i$ is the number of rows entity $i$ contributes. The answer is $w \cdot x$ for the unknown vector $x$ of per-entity values. An average is the same fact once the group size is known.
+
+Three tests run before the answer is returned. The cell test refuses a group whose support has fewer than $k$ entities. The nested-pair test refuses a group that contains, or is contained in, an earlier group and differs in fewer than $k$ entities. The linear test refuses a group that would put any unit vector $e_i$ in the span of the admitted weights. Refused queries add nothing to the history.
+
+An illustrative case, not a measured trial. Keys $1..7$ and $k{=}3$. The sums on $\{1,2,3,4\}$, $\{4,5,6,7\}$, and $\{1..7\}$ have supports 4, 4, and 7. The only nestings differ by three keys, so the cell test and the nested-pair test allow all three. Adding the three weight vectors produces $2e_4$. The linear test refuses the query that completes that span.
+
+\begin{proposition}
+\label{prop:linear}
+Suppose every admitted aggregate on a protected column passed the linear test, and values are unbounded reals. Then for every entity $i$ and every real vector $x$ consistent with the admitted answers, there is an $x'$ with the same answers and $x'_i \ne x_i$.
+\end{proposition}
+\begin{proof}
+The test refuses a vector precisely when some $e_i$ lies in the span of the admitted weights. If it never refused, $e_i$ is outside that span, so the solution set of $Wx=b$ contains a line along which coordinate $i$ moves.
+\end{proof}
+The proof says nothing about values restricted to a box, about a sum of two or more entities, or about predicates at two different thresholds. Those are the limits in the last paragraph of this section.
+
+The linear test shipped with the cached experiments is modified Gram--Schmidt in floating point, with a coordinate treated as determined when the projection diagonal exceeds $1-10^{-9}$. Weights in the audit are integers, so the same test can be row reduction over the rationals, with no tolerance. The rational test is the one used as the oracle in Section~\ref{sec:search}. On \Nfloattrials{} random trials (unit-weight ranges and join weights from 1 to 50) the two tests never disagreed, and they did not disagree on the search. They disagree on a constructed pair of weights $(10^{9},10^{9})$ and $(10^{9},10^{9}-1)$: those two equations determine both variables, the rational test says so, and the floating-point test reports neither. The $10^{-9}$ test is therefore not a proof for huge multiplicities. The workloads below do not use multiplicities of that size. Turning the rational test on is a flag (\texttt{exact\_linear}); the cached finance rates were computed with the floating-point test and were recomputed for $k{=}3$ and $k{=}10$ in this revision.
+
+Predicates on a protected column are a different unknown. The gateway relaxes each comparison to true, takes the entities that could match, and applies the same three tests to that candidate set. A count of one key against a threshold has a candidate set of size one and is refused. This blocks the probes we ran. It is not a proof for combinations of different thresholds: each threshold is its own indicator vector, and auditing them as one vector is a conservative heuristic~\cite{kleinberg2003boolean}. Strict mode refuses any predicate on the protected column, so the allow-or-refuse sequence depends only on the query text and the non-protected columns~\cite{kenthapadi2005simulatable}. We did not find a cheaper strict rule that keeps that property. Its benign cost is remeasured in Table~\ref{tab:audit}.
+
+What is out of scope, on purpose. The audit does not refuse a query merely because it shrinks the feasible interval of a bounded value. On the \Ndpauditn{} scripted tracker sessions, the answers the linear audit admits leave every target's linear-program interval at the full clipping domain (median width \Ndpauditwidth{}; \Ndpauditnarrow{} sessions narrowed). The attacker's midpoint is then no better than guessing the middle of the domain (\Ndpauditatt\%, the same as the prior \Ndpauditprior\%). Interval privacy is a different mechanism. Collusion across identities, and values that change between queries, are also out of scope.
+
+\section{Evaluation}
+\label{sec:eval}
+
+\subsection{Which model did what}
+
+No model is the judge. Disclosure in the adaptive study and in Section~\ref{sec:search} is the rank test. Table~\ref{tab:roles} is the assignment in the cached runs. Dated API snapshots were not stored; the identifiers are the strings in the result files. \texttt{claude-sonnet-5-5} was called as an attacker on one target and five defenses. The API returned a refusal on the first turn of each episode, so that model sent no SQL and contributes no attack result. It was the SQL agent on the BIRD capability sample. \texttt{qwen3:4b-instruct} was a local SQL agent on 55 tasks and was not an attacker. This revision adds no paid model call.
+
+\begin{table}[t]
+\caption{Roles in the cached studies. The judge is the rank test, not a model.}
+\label{tab:roles}
+\centering\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}p{0.28\columnwidth}p{0.32\columnwidth}p{0.28\columnwidth}@{}}
+\toprule
+Model id & Role & What was run \\
+\midrule
+\texttt{gpt-4o-mini} & SQL agent; attacker & 220 BIRD tasks; 50 targets $\times$ 5 defenses, 15 queries \\
+\texttt{gpt-4o} & SQL agent; attacker & 220 tasks; 25 targets $\times$ 4 defenses (strict not run) \\
+\texttt{claude-sonnet-5-5} & SQL agent; attacker attempt & 220 tasks; 1 target $\times$ 5 defenses, declined, 0 SQL \\
+\texttt{qwen3:4b-instruct} & SQL agent only & 55 tasks, local \\
+none & rank-test oracle & every disclosure bit \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Finance sessions: the cost is not the per-query cost}
+\label{sec:finance}
+
+The finance workload is the seeded TPC-H-shaped database (1,500 customers) and the \Nkthreens{} benign finance sessions (\Nkthreenq{} queries) plus the scripted attacks. Table~\ref{tab:audit} is recomputed in this revision from that generator. At $k{=}3$ the linear audit and the nested-pair audit refuse the same \Nkthreelinearq\% of benign queries and \Nkthreelinears\% of benign sessions. Per-query suppression refuses \Nkthreestatelessq\% of queries and \Nkthreestatelesss\% of sessions, and it stops \Nkthreestatelesstwo\% of the two-query trackers. The linear audit stops all of them, and it stops the three-query attacks that nested pairs mostly miss (\Nkthreelinearthree\% against \Nkthreepairwisethree\%). Strict mode keeps that prevention and refuses \Nkthreestrictq\% of benign queries, because the workload filters on balances.
+
+At $k{=}10$ the query-refusal rate of suppression, nested pairs, and the linear audit is the same, \Nktenlinearq\%. Prevention is not the same: suppression stops \Nktenstatelesstwo\% of two-query trackers and the linear audit stops all of them. ``Same cost as a minimum group size'' is therefore a statement about this workload at $k{=}10$, not a statement about $k{=}3$, and it is a statement about query refusals, not about which attacks survive.
+
+\begin{table}[t]
+\caption{Finance sessions, recomputed. \emph{Queries} and \emph{Sessions} are benign refusals. \emph{Two} and \emph{Three} are scripted differencing attacks prevented.}
+\label{tab:audit}
+\centering\scriptsize
+\begin{tabular}{@{}llcccc@{}}
+\toprule
+ & & Queries & Sessions & Two & Three \\
+\midrule
+\tabinput{tables/audit_k.tex}
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{A query portfolio, without a language model}
+\label{sec:search}
+
+The search uses a fresh in-memory table of \Nsearchn{} targets drawn from 1,500 customers with integer balances in $[-1000,10000]$. For each defense and target it may issue \Nsearchbudget{} queries. The portfolio is fixed: one customer's sum, the sum of that customer and one other, a segment aggregate and the same aggregate with the target removed, three overlapping ranges, greedy bisection of the key range, and mutation of ranges that contain the target. A second fresh session runs threshold bisection. The rational rank test decides exact recovery. Figure~\ref{fig:search} is the outcome.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/search.pdf}
+\caption{Targets recovered by the query portfolio. Exact balance: the unit vector is in the span of admitted sums. Bisection: a fresh session of threshold counts pins the integer balance. Nested pairs and the linear audit both run the predicate test, so bisection stops; minimum group size does not.}
+\label{fig:search}
+\end{figure}
+
+With no audit, the single-customer sum recovers \Nsearchnone{} of \Nsearchn{}. Minimum group size at $k{=}3$, $5$, and $10$ refuses that sum and still loses all \Nsearchn{} targets to the segment complement. Nested pairs refuse the complement and lose all \Nsearchn{} to the three-range overlap. The linear audit, the rational variant, and strict mode recover \Nsearchlinearkthree{} of \Nsearchn{} (upper 95\% Wilson bound \Nsearchwilson\%). The mutation loop did not recover any target that the named patterns had not already recovered. Calling this a QuerySnout-style discovery would overstate it: the winning patterns were written into the portfolio.
+
+Bisection on a fresh session pins the balance for all \Nsearchn{} targets when the only rule is a minimum group size, and for none of them when the predicate test is on.
+
+The two-customer sum needs its own session, because a search that has already isolated the target no longer shows what that one query reveals. With no minimum group size it was answered for \Npairnoneadm{} of \Npairn{} targets, the number matched the sum of the two balances in every admitted case, and neither customer's unit vector was in the span (\Npairnoneexact{}). Under the linear audit at $k{=}3$ the same query was refused for all \Npairn{} targets, because the group has size 2. It is a disclosure of a sum of two people. It is not a disclosure of either person.
+
+The cached adaptive attackers are a different experiment and a weaker budget. \texttt{gpt-4o-mini} (50 targets, 15 queries) and \texttt{gpt-4o} (25 targets, strict mode not run) both had zero exact disclosures under the linear audit, as decided by the floating-point oracle. Those episodes predate the predicate test. \texttt{claude-sonnet-5-5} is not part of that success rate. A local open-weight attacker with a budget of 100 queries was not run: no model server was listening, and this revision does not call a paid API. The harness is \texttt{experiments/purpose\_sql/llm\_attacker\_local.py}.
+
+\subsection{Human-written queries, one audit version}
+
+BIRD's gold SQL is not written by the author of this paper. The committed audit log covers two databases, \texttt{financial} (\Nbirdfinn{} queries) and \texttt{debit\_card\_specializing} (\Nbirddebn{} queries), under one version: weighted sums, the predicate test, $k{=}3$. Table~\ref{tab:bird} is that log. On both databases the per-query rule and the linear audit refuse the same share of queries. The session tests added no further refusals, which is why a ``sessions'' column matches a ``rules'' column. That is the measurement, not a copy-paste error. A second admitted-count split (93/41 against 90/40) is not in the repository and is not reported. Spider~2.0 runs are also not in the repository; there is no second Sonnet number to average.
+
+\begin{table}[t]
+\caption{BIRD gold queries, one audit version (\texttt{bird\_benign.json}). Min.\ group and linear refuse the same queries. Sessions is the share of the 200 sampled sessions with at least one refusal.}
+\label{tab:bird}
+\centering\scriptsize
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+DB & $n$ & Min.\ group & Linear & Strict & Sessions \\
+\midrule
+\tabinput{tables/bird.tex}
+\bottomrule
+\end{tabular}
+\end{table}
+
+Execution accuracy on the capability sample is the share of all tasks whose SQL ran and matched gold. Refused and invalid SQL count as wrong. Table~\ref{tab:ex} also shows the higher accuracy computed only on queries the enforcer admitted, for the columns-plus-keys grant. The published figure to use is the all-tasks column. The sample is 220 BIRD dev tasks (20 per database, seed 13), not the full dev set. The local model is a 55-task subset.
+
+\begin{table}[t]
+\caption{Execution accuracy for the columns-plus-keys grant. \emph{All} divides by every task. \emph{Admitted} divides only by queries the enforcer ran.}
+\label{tab:ex}
+\centering\scriptsize
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+Model id & $n$ & All & Admitted $n$ & Admitted \\
+\midrule
+\tabinput{tables/bird_ex.tex}
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Differential privacy is complementary}
+\label{sec:dp}
+
+Table~\ref{tab:dp} has two mechanisms on the finance sessions. The naive column is the cached Laplace baseline: one session budget, split evenly across protected aggregates, sensitivity $10{,}000$ after clipping balances to $[-1000,10000]$. The minimum-group column was run in this revision. Each query spends half of its share on a noisy count and half on a noisy sum, and the sum is released only when the noisy count is at least 3. Thresholding a noisy count is post-processing, so basic composition still applies. This is not an OpenDP or Tumult run, and it is not DPSQL+'s accountant~\cite{matsumoto2026dpsql}.
+
+At $\varepsilon{=}100$ the naive attacker is within 10\% of the target on \Nnaivehundredatt\% of tracker sessions, and the minimum-group mechanism's two-query difference is within 10\% of the target's balance on \Ndphundredatt\% of draws, with \Ndphundredsupn{} answers suppressed. At $\varepsilon{=}1$ the released answers have median relative error \Ndponeerrpct\%. No budget here gives exact answers and a small attack success. The audit refuses \Nkthreelinearq\% of benign finance queries and returns the rest unchanged, and it does not claim a privacy loss that composes over every possible query. The two belong together when a deployment needs both exact reports and a bound on queries the audit does not model.
+
+\begin{table}[t]
+\caption{Finance sessions. Naive: cached Laplace, attacker within 10\% of the balance. Min.\ group: noisy count must clear $k{=}3$; the last column is the share of draws whose two-query noise is within 10\% of the balance, suppression counting as a miss.}
+\label{tab:dp}
+\centering\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}cccccc@{}}
+\toprule
+$\varepsilon$ & Naive err. & Naive att. & Suppress & Released err. & Diff.\ att. \\
+\midrule
+\tabinput{tables/dp.tex}
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Where the time goes}
+
+On the committed PostgreSQL replay, \Neeover{} of \Neen{} direct-path checks took more than one second. The maximum was \Neemax{} seconds, and the median check was \Neechk{} ms on the direct path and \Neechkproxy{} ms through the proxy. A draft figure of 2.2 ms against 2.4 ms is not in this log. Medians of the pieces do not add to the median of the total. On the \Neeexecn{} queries that executed, out of \Neen{}, the median check, execute, and transport sum to \Neesummed{} ms, while the median round trip is \Neertexec{} ms. The round trip in the earlier table is a median over a different set of queries, including refusals that never execute.
+
+Computing the entity set inside DuckDB, on one million customers, is a different measurement (this VM, not a warehouse). A \texttt{COUNT(DISTINCT)} over one nation (\Nscalenation{} customers) took \Nscalecell{} ms median. The aggregated \texttt{(key, multiplicity)} result took \Nscaleweights{} ms, and the same aggregation through a join to two million orders took \Nscalejoin{} ms. Shipping the matching keys took \Nscaleship{} ms. One thousand successive range queries, width 5 to 100, grew the rational basis to rank \Nhistrank{}. The median check was \Nhistmed{} ms, the maximum was \Nhistmax{} ms, and \Nhistover{} checks exceeded one second. Eight concurrent sessions of 50 queries on 200{,}000 customers each had a mean check of \Nconcms{} ms. These ranges are not the heavy rewrites in the PostgreSQL tail. They show that the rank update is cheap once the database returns one row per entity.
+
+\section{Threats to Validity}
+
+The finance sessions, the attack families, and the query portfolio were written by the same author as the audit. The portfolio confirms known gaps. It does not search the space QuerySnout searches, and the mutation step added no recovery. The adaptive language-model attackers used a budget of 15, were run before the predicate test, and do not include a model that agreed to attack: Sonnet declined, and no local model was available for a 100-query replacement.
+
+BIRD accuracy is a 220-task sample, and the local model is 55 of those tasks. The benign audit log is two databases, not all of BIRD, and not Spider~2.0. Gold SQL that asks for one customer's amount is a refusal under an aggregate-only purpose; that rate is policy fit.
+
+The floating-point rank test missed a constructed disclosure with weights near $10^{9}$. The rational test is available and matched the floating-point test on the reported workloads. Interval narrowing, cross-threshold predicate combinations, and changes to the snapshot are outside the proof. Strict mode closes the predicate channel by refusing it, at the benign rate in Table~\ref{tab:audit}.
+
+The privacy numbers are basic composition of Laplace noise implemented in this repository. They are not a certificate from a DP library. The warehouse minimum-group measurements at $k{=}3,5,10$ were not run, because a Snowflake or BigQuery query can incur a charge. The SQL and the command are in \texttt{vendor\_k\_sweep.py}.
+
+The DuckDB timings are one VM and one million synthetic customers. They do not replace the PostgreSQL tail, and they do not reproduce a 231-second check, which is not in the committed log.
+
+\section{Conclusion}
+
+The session audit refuses the query that would make one person's protected value an exact linear combination of answers already given. On the finance sessions that costs more benign refusals than a per-query minimum group size at $k{=}3$, and it stops a 100-target portfolio that defeats suppression and nested pairs. A sum of two customers is a sum, not either value. Differential privacy covers queries the audit does not model, and it does not return the exact answers the audit returns. The bound is exact recovery, per identity, on a static snapshot.
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}

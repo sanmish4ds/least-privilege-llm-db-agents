@@ -1,0 +1,26 @@
+{
+ "n_targets": 100,
+ "defenses": {
+  "none": {
+   "admitted": 100,
+   "sum_matches_two_balances": 100,
+   "either_customer_exact": 0
+  },
+  "stateless_k3": {
+   "admitted": 0,
+   "sum_matches_two_balances": 0,
+   "either_customer_exact": 0
+  },
+  "stateless_k10": {
+   "admitted": 0,
+   "sum_matches_two_balances": 0,
+   "either_customer_exact": 0
+  },
+  "linear_k3": {
+   "admitted": 0,
+   "sum_matches_two_balances": 0,
+   "either_customer_exact": 0
+  }
+ },
+ "note": "One query per fresh session: SUM of the target and one other customer. Admitting it reveals the sum of two balances. It does not put either unit vector in the span."
+}

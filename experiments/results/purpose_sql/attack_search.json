@@ -1,0 +1,183 @@
+{
+ "n_targets": 100,
+ "budget": 100,
+ "seed": 21,
+ "n_customers": 1500,
+ "balance_domain": [
+  -1000,
+  10000
+ ],
+ "note": "exact_recovery counts targets whose own balance is a rational linear combination of admitted sums. pair_sum_admitted_not_exact counts targets for which a two-customer sum was answered and the target remained undetermined. bisection_narrowed is a fresh session of COUNT probes on one key.",
+ "defenses": {
+  "none": {
+   "exact_recovery": 100,
+   "exact_rate": 1.0,
+   "pair_sum_admitted_not_exact": 0,
+   "bisection_narrowed": 100,
+   "float_exact_disagreements": 0,
+   "median_queries_when_exact": 2,
+   "mean_refusals": 0.0,
+   "strategies_succeeded": {
+    "singleton": 100,
+    "sum_of_two": 0,
+    "complement": 0,
+    "three_query": 0,
+    "greedy_split": 0,
+    "evolutionary": 0
+   }
+  },
+  "stateless_k3": {
+   "exact_recovery": 100,
+   "exact_rate": 1.0,
+   "pair_sum_admitted_not_exact": 0,
+   "bisection_narrowed": 100,
+   "float_exact_disagreements": 0,
+   "median_queries_when_exact": 4,
+   "mean_refusals": 2.0,
+   "strategies_succeeded": {
+    "singleton": 0,
+    "sum_of_two": 0,
+    "complement": 100,
+    "three_query": 0,
+    "greedy_split": 0,
+    "evolutionary": 0
+   }
+  },
+  "stateless_k5": {
+   "exact_recovery": 100,
+   "exact_rate": 1.0,
+   "pair_sum_admitted_not_exact": 0,
+   "bisection_narrowed": 100,
+   "float_exact_disagreements": 0,
+   "median_queries_when_exact": 4,
+   "mean_refusals": 2.0,
+   "strategies_succeeded": {
+    "singleton": 0,
+    "sum_of_two": 0,
+    "complement": 100,
+    "three_query": 0,
+    "greedy_split": 0,
+    "evolutionary": 0
+   }
+  },
+  "stateless_k10": {
+   "exact_recovery": 100,
+   "exact_rate": 1.0,
+   "pair_sum_admitted_not_exact": 0,
+   "bisection_narrowed": 100,
+   "float_exact_disagreements": 0,
+   "median_queries_when_exact": 4,
+   "mean_refusals": 2.0,
+   "strategies_succeeded": {
+    "singleton": 0,
+    "sum_of_two": 0,
+    "complement": 100,
+    "three_query": 0,
+    "greedy_split": 0,
+    "evolutionary": 0
+   }
+  },
+  "pairwise_k3": {
+   "exact_recovery": 100,
+   "exact_rate": 1.0,
+   "pair_sum_admitted_not_exact": 0,
+   "bisection_narrowed": 0,
+   "float_exact_disagreements": 0,
+   "median_queries_when_exact": 7,
+   "mean_refusals": 3.0,
+   "strategies_succeeded": {
+    "singleton": 0,
+    "sum_of_two": 0,
+    "complement": 0,
+    "three_query": 100,
+    "greedy_split": 0,
+    "evolutionary": 0
+   }
+  },
+  "linear_k3": {
+   "exact_recovery": 0,
+   "exact_rate": 0.0,
+   "pair_sum_admitted_not_exact": 0,
+   "bisection_narrowed": 0,
+   "float_exact_disagreements": 0,
+   "median_queries_when_exact": null,
+   "mean_refusals": 31.76,
+   "strategies_succeeded": {
+    "singleton": 0,
+    "sum_of_two": 0,
+    "complement": 0,
+    "three_query": 0,
+    "greedy_split": 0,
+    "evolutionary": 0
+   }
+  },
+  "linear_k5": {
+   "exact_recovery": 0,
+   "exact_rate": 0.0,
+   "pair_sum_admitted_not_exact": 0,
+   "bisection_narrowed": 0,
+   "float_exact_disagreements": 0,
+   "median_queries_when_exact": null,
+   "mean_refusals": 34.69,
+   "strategies_succeeded": {
+    "singleton": 0,
+    "sum_of_two": 0,
+    "complement": 0,
+    "three_query": 0,
+    "greedy_split": 0,
+    "evolutionary": 0
+   }
+  },
+  "linear_k10": {
+   "exact_recovery": 0,
+   "exact_rate": 0.0,
+   "pair_sum_admitted_not_exact": 0,
+   "bisection_narrowed": 0,
+   "float_exact_disagreements": 0,
+   "median_queries_when_exact": null,
+   "mean_refusals": 39.33,
+   "strategies_succeeded": {
+    "singleton": 0,
+    "sum_of_two": 0,
+    "complement": 0,
+    "three_query": 0,
+    "greedy_split": 0,
+    "evolutionary": 0
+   }
+  },
+  "exact_k3": {
+   "exact_recovery": 0,
+   "exact_rate": 0.0,
+   "pair_sum_admitted_not_exact": 0,
+   "bisection_narrowed": 0,
+   "float_exact_disagreements": 0,
+   "median_queries_when_exact": null,
+   "mean_refusals": 31.76,
+   "strategies_succeeded": {
+    "singleton": 0,
+    "sum_of_two": 0,
+    "complement": 0,
+    "three_query": 0,
+    "greedy_split": 0,
+    "evolutionary": 0
+   }
+  },
+  "strict_k3": {
+   "exact_recovery": 0,
+   "exact_rate": 0.0,
+   "pair_sum_admitted_not_exact": 0,
+   "bisection_narrowed": 0,
+   "float_exact_disagreements": 0,
+   "median_queries_when_exact": null,
+   "mean_refusals": 31.76,
+   "strategies_succeeded": {
+    "singleton": 0,
+    "sum_of_two": 0,
+    "complement": 0,
+    "three_query": 0,
+    "greedy_split": 0,
+    "evolutionary": 0
+   }
+  }
+ }
+}
