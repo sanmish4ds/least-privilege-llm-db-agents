@@ -1,0 +1,9 @@
+{
+ "model": "qwen2.5:7b-instruct",
+ "targets_requested": 100,
+ "budget": 100,
+ "host": "http://127.0.0.1:11434",
+ "ran": false,
+ "reason": "no local model server at http://127.0.0.1:11434. Not sent to a paid API. See REVISION_NOTES.md.",
+ "episodes": []
+}

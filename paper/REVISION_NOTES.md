@@ -1,0 +1,132 @@
+# Revision notes
+
+The review was written against the Overleaf project. That source is committed on its own. The TKDE manuscript was not edited.
+
+## Author decisions applied in the latest commit
+
+1. The conversational-risk arXiv citation and the "under review" journal sentence are removed, including the bib entry. The session-alarm section no longer depends on that paper.
+2. Paid calls were approved only under a $10 cap for gpt-4o and for the vendor runs. See the spend section. Nothing was executed.
+3. The repository is the source of truth. Manuscript numbers that had no log were removed, not kept beside a disclaimer.
+
+## Spend
+
+Actual spend: **$0**. No API key and no warehouse credentials are in this environment (`OPENAI_API_KEY`, `SNOWFLAKE_*`, `GOOGLE_APPLICATION_CREDENTIALS` are unset). No local model server is listening.
+
+### gpt-4o attacker: not run, estimate exceeds $10
+
+List price checked 14 Nov 2026 (OpenAI docs for `gpt-4o`): **$2.50 / 1M input tokens, $10 / 1M output tokens**.
+
+The approved run is 100 targets with a budget of 100 queries, one defense. That is 10,000 calls. A low assumption that still clears the cap: 1,500 input tokens and 200 output tokens per call, with no cache.
+
+- Input: 10,000 × 1,500 = 15M × $2.50/1M = **$37.50**
+- Output: 10,000 × 200 = 2M × $10/1M = **$20.00**
+- Total: **$57.50**
+
+A growing transcript (several thousand tokens by the later turns) is higher. Five defenses would multiply it. The run was not started.
+
+Command, once a budget above that estimate is approved and a key is present:
+
+```bash
+export OPENAI_API_KEY=...
+# The current harness caps episodes at 15 queries and reads the cache.
+# A 100-query run needs experiments/purpose_sql/adaptive_attack.py
+# invoked only after MAX_QUERIES is raised, for example:
+#   python experiments/purpose_sql/adaptive_attack.py --model gpt-4o --targets 100
+```
+
+### Snowflake and BigQuery: not run, no credentials
+
+Estimated cost on the 1,500-row table remains under $1, but there is nothing to authenticate with. `vendor_k_sweep.py --execute` still refuses to open a connection. When credentials exist:
+
+```bash
+export SNOWFLAKE_ACCOUNT= SNOWFLAKE_USER= SNOWFLAKE_PASSWORD= \
+  SNOWFLAKE_WAREHOUSE= SNOWFLAKE_DATABASE= SNOWFLAKE_SCHEMA=
+python experiments/purpose_sql/vendor_k_sweep.py --execute snowflake
+
+export BIGQUERY_PROJECT= GOOGLE_APPLICATION_CREDENTIALS=/path/to/sa.json
+python experiments/purpose_sql/vendor_k_sweep.py --execute bigquery
+```
+
+The script does not yet issue the k=3,5,10 queries even with those variables; it exits before connecting. Wiring the SQL is the author's next step after the keys are present. Do not treat the old Overleaf vendor table as a result.
+
+## Numbers removed because the repo has no log
+
+| Removed claim | Why |
+|---|---|
+| 471/2,942 checks over 1 s, maximum 231 s, and the 1,000,000-customer end-to-end table | Not in `experiments/results/mcp_e2e/`. The log that is there: 112 of 2,942 direct checks over 1 s, maximum 4.44 s, 150,000 customers. That is what the paper reports. |
+| Spider 2.0, including both Sonnet runs 27→18 and 27→20 | Only in `agent_numbers.tex` from Overleaf. No Spider result file. The claims are gone. |
+| BIRD agent table (admitted 93/41, sessions column, McNemar tests) | Only in `tables/agent.tex`. The committed BIRD log is `bird_benign.json`: 106 and 64 gold queries and the refusal rates in Table bird. |
+| Snowflake/BigQuery 30-target table | Only in `vendor_numbers.tex`. No warehouse log. |
+| Programmatic 200-target combination-test table, and the 2.2 ms vs 2.4 ms check times | Only in `new_numbers.tex` / `support_numbers.tex`. Not reported. |
+| Dense-basis timing at 1,000,000 entities (47 s, 4,000 MB) | Only in `scale_numbers.tex`. The scaling table stops at the committed 50,000-entity rows. |
+
+## What the paper now uses
+
+Finance-session audit rates, session-alarm rates, cached adaptive attackers, BIRD gold-query refusals, the Laplace baseline, the 150,000-customer MCP replay, and the 50,000-entity scaling rows: all from files under `experiments/results/`. The 100-target portfolio, the two-customer sum, the rational rank comparison, the DuckDB timings, and the Laplace-plus-noisy-count run: from the scripts added on this branch, via `revision_numbers.tex`.
+
+Compiled length after this pass: 12 pages total; the conclusion and the reference list both begin on page 11.
+
+Compiled with pdfLaTeX and the PVLDB Vol. 20 template: **14 pages total**. The conclusion is on page 12 and the reference list starts on page 13, so the body is 12 pages excluding references. Extra material is `paper/pvldb/appendix.tex` (not input by `main.tex`).
+
+## Number mismatches (not silently replaced)
+
+The manuscript's existing claims still come from its macro files. Where a committed log disagrees, both values are below.
+
+| Claim in the Overleaf macros | Value in the committed repo logs | Likely source |
+|---|---|---|
+| 471 of 2,942 checks over 1 s, 115 over 10 s, maximum 231 s at 1,000,000 customers (`scale_numbers.tex`) | The only PostgreSQL per-query log, `experiments/results/mcp_e2e/per_query.json`, is the 150,000-customer run: 112 of 2,942 direct checks over 1 s, maximum 4.44 s. There is no 1,000,000-customer log in the repo. | A warehouse-scale run that was not committed. The paper keeps the macro figures and says the log is missing. |
+| Table `agent.tex`: financial admitted 93, debit admitted 41 (134). One-entity 11 and 16 (27). 134+27=161. | `numbers.tex`: 106 and 64 gold queries (170). `split_numbers.tex`: 16 and 24 refused alone under the conditional split, so 90 and 40 admitted that way (130). | Two cuts. The 93/41 labels are hardcoded, not macros. They do not match 106−16 or 106−19. This revision does not pick a winner. |
+| Combination-test median 2.2 ms (`new_numbers.tex` `\Npairmed`, and the attacker table's 2.2 / 24) | Combination-test median 2.4 ms at \(k=3\) (`support_numbers.tex` `\Nsupthreecombmed`, table support 2.4 / 25) | Two runs. The cost section now says so. Neither number was edited. |
+| Spider gateway result previously cited as 27→20 only | `agent_numbers.tex` has both: open 27, gateway 18 (`Nssothopenc` / `Nssothgatec`, \(p=0.01\)) and open 27, gateway 20 (`Nsnothopenc` / `Nsnothgatec`, \(p=0.04\)) | The text had mixed the open count of one run with the gateway count of the other. Both runs are now in the text. The counts themselves were not changed. |
+| "Gateway, sessions" column equals "Gateway, rules" (41 / 9 / 0.8 and 46 / 0 / 1.9) and not "Gateway" (50 / 0 / 1.1 and 54 / 0 / 1.9) | No separate session log in the repo | The text now says the sessions column matches the rules column, and the files do not say whether that run put the rules in the prompt. The numbers were not edited. |
+
+New local results are macros in `revision_numbers.tex`, generated by `make_revision_numbers.py` from JSON. They are labeled as additional and are not substituted for the rows above.
+
+## What changed, by review item
+
+1. **Abstract cost.** The "same benign cost as a per-query minimum group size" claim is now limited to the large-group TPC-H mixes (0.0 / 3.3 / 7.4 for both controls). Finance sessions: 0.6% → 3.3% of queries and 7.0% → 26.8% of sessions. Strict mode 25.6%.
+2. **Four vendor attacks.** Abstract, introduction, Table 2 caption, and conclusion: three attacks recovered every target's exact balance; "Sum of two (the sum)" recovered the sum of two balances. The 30/30 counts are unchanged. A local 100-session probe agrees that a two-customer sum determines neither unit vector.
+3. **Spider 2.0.** Both Sonnet runs are reported: 27→18 and 27→20. Model id `claude-sonnet-5-5`.
+4. **BIRD 93/41 vs 90/40.** Explained next to the tables from the macro files. Counts not replaced. All-questions accuracy cannot be computed because 9 gold queries are in neither row.
+5. **Sessions vs rules.** Text now names which column matches which. Numbers not replaced.
+6. **Medians.** The end-to-end table is unchanged. The new DuckDB note does not claim those medians add.
+7. **2.2 ms vs 2.4 ms.** Named as the finance-session combination test versus the padded-sum experiment.
+8. **Fig. 3 labels.** `fig7_audit_tradeoff.pdf` (the third figure) was redrawn from `results.json` with titles "Two-query differencing" and "Three-query differencing".
+9. **RQ4.** Opening line no longer says "Neither would." A table of the 1% FPR alarm rates was added from existing macros. Laplace is described as complementary. The appendix reports a noisy-count-plus-Laplace run (not OpenDP, not DPSQL+).
+10. **CRA / journal paper.** `mishra2026cra` is cited. The journal version is "under review" with no venue. The note asks the author to confirm the venue. Overlap stated: length-matched sessions and the guard/ledger baselines; no dialogue data reused.
+11. **Related work.** V8 is described as compositional leakage and this paper as a defense for it. Added SafeNLIDB, SecureSQL, FactGate (SessionBound was v1), DPSQL+, PIMENTO, QuerySnout, QueryCheetah, and the provenance semiring / why-provenance citations, checked earlier against arXiv, the ACL bib, or Crossref. Table 1 has rows for SafeNLIDB, SecureSQL, FactGate, and DPSQL+. Contribution 1 is the \(k=3\), 30-target measurement, not a "first" claim, and not a \(k=5,10\) claim.
+12. **Model roles.** Setup names `gpt-4o-mini` and `gpt-4o` as the attackers that issued SQL, and `claude-sonnet-5-5` as the Spider agent that refused every attacker episode (1 target, 5 defenses, 0 SQL). The judge is the rank test. Dated snapshots were not in the files.
+13. **Stale files removed.** `tables/capability.tex` and `figures/fig2`–`fig6`, which `main.tex` never input. Capability macros remain inside `numbers.tex` and are unused by this paper; stripping them risks deleting a live macro, so they were left.
+14. **Threats.** Validity now states author-built attacks, model-proposed Spider labels checked only by the author, the 15-query budget, Sonnet's refusal, vendor \(k=3\) only, the \(10^{-9}\) gap, and the missing 1,000,000-customer log.
+15. **New free results folded in.** 100-target portfolio (0/100 exact under the linear audit, Wilson upper bound 3.7%). Two-customer sum. Rational vs \(10^{-9}\) rank test (0/400 disagreements; one \(10^{9}\) counterexample). DuckDB in-database key weights at 1M customers (9.4 ms median) and 1,000 range updates (max 3.71 ms). DP framed as complementary, with the noisy-count variant in the appendix.
+
+## Paid calls awaiting approval
+
+None were made.
+
+1. Open-weight attacker, 100 targets, budget 100. Free if a local server is up:
+
+```bash
+python experiments/purpose_sql/llm_attacker_local.py --model qwen2.5:7b-instruct --targets 100 --budget 100
+```
+
+The harness found no server and does not fall back to a paid API. A paid `gpt-4o` run of 100 targets × 100 turns was not priced from a live rate card. At a few cents a call it is on the order of tens of dollars. Do not start it without an approved budget.
+
+2. Snowflake or BigQuery at \(k=3,5,10\). The script exits before connecting:
+
+```bash
+python experiments/purpose_sql/vendor_k_sweep.py --execute snowflake
+python experiments/purpose_sql/vendor_k_sweep.py --execute bigquery
+```
+
+On the 1,500-row synthetic table and a few dozen queries per \(k\), a reasonable estimate is under one US dollar on an X-Small warehouse or BigQuery on-demand. Confirm the current price sheet. No connection was opened.
+
+## Still open
+
+- The 1,000,000-customer log behind 471 / 231 s.
+- Which audit version produced admitted counts 93 and 41.
+- Whether the BIRD session run included the rules in the prompt.
+- Dated model snapshots and the access date for `claude-sonnet-5-5`.
+- The venue of the conversational-risk journal submission.
+- Spider 2.0's ICLR 2025 bib update and P2SQL's ICSE 2025 bib update: not applied. A Crossref lookup was rate-limited, so the existing arXiv entries were left in place. BIRD already notes NeurIPS 2023.
+- Vendor \(k=5,10\), an open-weight attacker, and OpenDP were not run.

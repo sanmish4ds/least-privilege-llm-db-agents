@@ -76,6 +76,8 @@ class PurposePolicy(BaseModel):
     fail_closed: bool = True           # refuse guarded queries whose entity sets cannot be computed
     strict_protected: bool = False     # refuse predicates on protected columns: audit decisions then
                                        # depend only on non-protected data (simulatable)
+    exact_linear: bool = False         # rank test over the rationals (integer weights); the default
+                                       # remains the float Gram-Schmidt test with TOL = 1e-9
     audit_predicates: bool = True      # audit predicates on protected columns (e.g. COUNT ... WHERE
                                        # key = 570 AND balance > x): candidate sets, with the protected
                                        # predicates relaxed, get the cell / pairwise / linear tests
@@ -318,6 +320,87 @@ class LinearAuditor:
             self.Q = self._add(self.Q, s)
 
 
+class ExactLinearAuditor:
+    """Same test as ``LinearAuditor``, over the rationals, for integer weights.
+
+    Row counts are integers, so the span membership test does not need a
+    floating-point tolerance. Entity ``i`` is exactly derivable when the
+    reduced basis contains the unit vector ``e_i``. ``disclosed`` returns every
+    such entity after the new sets are added, including ones already derivable,
+    matching ``LinearAuditor``.
+    """
+
+    def __init__(self):
+        from fractions import Fraction
+        self._F = Fraction
+        self.index: dict = {}
+        self.rows: list[tuple] = []          # (pivot key, {key: Fraction}) in RREF
+
+    def _touch(self, keys) -> None:
+        for k in keys:
+            if k not in self.index:
+                self.index[k] = len(self.index)
+
+    def _vec(self, keys) -> dict:
+        F = self._F
+        return {k: F(int(w)) for k, w in _weights(keys).items() if int(w) != 0}
+
+    def _insert(self, rows: list, vec: dict) -> list:
+        v = dict(vec)
+        for pivot, row in rows:
+            coef = v.get(pivot)
+            if not coef:
+                continue
+            for k, w in row.items():
+                nv = v.get(k, 0) - coef * w
+                if nv:
+                    v[k] = nv
+                else:
+                    v.pop(k, None)
+        if not v:
+            return rows
+        pivot = min(v, key=lambda k: self.index[k])
+        scale = v[pivot]
+        v = {k: w / scale for k, w in v.items()}
+        out = []
+        for p, row in rows:
+            coef = row.get(pivot)
+            if coef:
+                row = dict(row)
+                for k, w in v.items():
+                    nv = row.get(k, 0) - coef * w
+                    if nv:
+                        row[k] = nv
+                    else:
+                        row.pop(k, None)
+            out.append((p, row))
+        out.append((pivot, v))
+        out.sort(key=lambda pr: self.index[pr[0]])
+        return out
+
+    @staticmethod
+    def _units(rows) -> list:
+        return [p for p, row in rows if len(row) == 1 and row.get(p) == 1]
+
+    def _advance(self, sets, commit: bool):
+        vecs = [self._vec(s) for s in sets]
+        vecs = [v for v in vecs if v]
+        self._touch(set().union(*vecs) if vecs else set())
+        rows = self.rows
+        for v in vecs:
+            rows = self._insert(rows, v)
+        found = self._units(rows)
+        if commit:
+            self.rows = rows
+        return found
+
+    def disclosed(self, sets: list) -> list:
+        return self._advance(sets, commit=False)
+
+    def commit(self, sets: list) -> None:
+        self._advance(sets, commit=True)
+
+
 class PurposeMonitor:
     """One session (subject + declared purpose). Call ``check`` before each query runs."""
 
@@ -327,10 +410,11 @@ class PurposeMonitor:
         self.policy, self.spec, self.executor = policy, policy.purposes[purpose], executor
         self.seen_violations: dict[str, float] = {}
         self.agg_sets: dict[str, list[dict]] = defaultdict(list)        # entity.protected col -> weight vectors
-        self.linear: dict[str, LinearAuditor] = defaultdict(LinearAuditor)
+        aud = ExactLinearAuditor if policy.exact_linear else LinearAuditor
+        self.linear: dict = defaultdict(aud)
         self.revealed: dict[str, set] = defaultdict(set)                 # entity table -> keys
         self.pred_sets: dict[str, list[dict]] = defaultdict(list)       # candidate sets of predicate queries
-        self.pred_linear: dict[str, LinearAuditor] = defaultdict(LinearAuditor)
+        self.pred_linear: dict = defaultdict(aud)
         self.cell = 0.0
 
     def _predicate_audit(self, q: QueryUses, s: PurposeSignals) -> list[tuple[str, list[dict]]]:

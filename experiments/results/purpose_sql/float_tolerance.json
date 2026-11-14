@@ -1,0 +1,24 @@
+{
+ "tolerance": 1e-09,
+ "families": {
+  "unit_ranges_n400": {
+   "trials": 200,
+   "trials_with_any_disagreement": 0,
+   "disagreement_steps": 0
+  },
+  "join_weights_1_to_50": {
+   "trials": 200,
+   "trials_with_any_disagreement": 0,
+   "disagreement_steps": 0
+  },
+  "ill_conditioned_pair": {
+   "float_disclosed": [],
+   "exact_disclosed": [
+    0,
+    1
+   ],
+   "disagree": true,
+   "note": "weights (1e9, 1e9) and (1e9, 1e9-1). Their difference is e_1. Float Gram-Schmidt uses TOL=1e-9 on the projection diagonal."
+  }
+ }
+}

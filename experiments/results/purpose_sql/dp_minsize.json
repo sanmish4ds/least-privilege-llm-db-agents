@@ -1,0 +1,37 @@
+{
+ "accounting": "basic composition of Laplace mechanisms; suppress when noisy count < k",
+ "library": "numpy laplace, not OpenDP",
+ "k": 3,
+ "runs": {
+  "eps=1": {
+   "benign_answers": 83858,
+   "suppressed": 21145,
+   "suppressed_rate": 0.252,
+   "benign_median_rel_error_released": 1.48,
+   "benign_within_5pct_released": 0.056,
+   "n_released_with_error": 62713,
+   "tracker_difference_within_10pct": 0.001,
+   "n_tracker_sessions": 100
+  },
+  "eps=10": {
+   "benign_answers": 83858,
+   "suppressed": 1696,
+   "suppressed_rate": 0.02,
+   "benign_median_rel_error_released": 0.173,
+   "benign_within_5pct_released": 0.251,
+   "n_released_with_error": 82162,
+   "tracker_difference_within_10pct": 0.011,
+   "n_tracker_sessions": 100
+  },
+  "eps=100": {
+   "benign_answers": 83858,
+   "suppressed": 29,
+   "suppressed_rate": 0.0,
+   "benign_median_rel_error_released": 0.018,
+   "benign_within_5pct_released": 0.774,
+   "n_released_with_error": 83829,
+   "tracker_difference_within_10pct": 0.112,
+   "n_tracker_sessions": 100
+  }
+ }
+}

@@ -1,0 +1,29 @@
+\documentclass[sigconf,nonacm]{acmart}
+\usepackage{pvldb}
+\renewcommand\vldbdoi{XX.XX/XXX.XX}
+\renewcommand\vldbpages{XXX-XXX}
+\renewcommand\vldbavailabilityurl{https://github.com/sanmish4ds/least-privilege-llm-db-agents}
+\renewcommand\vldbpagestyle{plain}
+\input{numbers.tex}
+\input{revision_numbers.tex}
+\begin{document}
+\title{Appendix}
+\author{Sanjay Mishra}
+\affiliation{\institution{Independent Researcher}\city{Raleigh}\state{NC}\country{USA}}
+\email{sanmish4@icloud.com}
+\begin{abstract}
+Extended material for the PVLDB revision: BIRD refusal reasons, the local portfolio, the rank test, DuckDB timings, and the Laplace-plus-count baseline. Manuscript numbers that the repository logs do not contain are not replaced; see paper/REVISION\_NOTES.md.
+\end{abstract}
+\maketitle
+\vldbtopmatter
+\section{BIRD refusal reasons}
+Each gold query alone, fresh session, $k=3$. Financial, then debit card. Rank or group by a protected value: \Nfincatrank, \Ndebitcatrank. Filter on too few entities: \Nfincatthreshold, \Ndebitcatthreshold. Aggregate under a protected filter: \Nfincatweighted, \Ndebitcatweighted. Filtered count over a join: \Nfincatfanout, \Ndebitcatfanout. Aggregate of an expression: \Nfincatexpression, \Ndebitcatexpression. Aggregate over too few entities: \Nfincataggregate, \Ndebitcataggregate. Shape cannot be audited: \Nfincatopaque, \Ndebitcatopaque.
+\section{Query portfolio and rank test}
+No language model, 1{,}500 customers, \Nrevn{} targets, 100 queries. Minimum group size and no audit recovered all \Nrevn{}. Nested pairs recovered all \Nrevn{} and stopped bisection. The linear audit recovered none (Wilson upper bound \Nrevwilson\%). A two-customer sum matched both balances in \Nrevpairsum{} sessions and determined \Nrevpairexact{} individuals. \Nrevfloattrials{} integer-weight trials had \Nrevfloatmiss{} float-versus-rational disagreements. Weights near $10^{9}$ are a counterexample to the $10^{-9}$ test.
+\section{DuckDB and Laplace}
+Aggregated key weights on one million customers: \Nrevduckms{}~ms median. \Nrevduckhist{} range updates, maximum \Nrevduckmax{}~ms. Laplace plus a noisy count of at least 3, basic composition, not OpenDP: at $\varepsilon=100$, median relative error \Nrevdperr\% and difference-within-10\% on \Nrevdpatt\% of draws.
+\section{Data, code, declarations}
+Code and caches: \url{https://github.com/sanmish4ds/least-privilege-llm-db-agents}. Funding and conflicts: none. Besides the models under study, the author used Claude to help restructure the text and the experiment code. The author is responsible for the claims.
+\section{Not run}
+No local model server was up. Snowflake and BigQuery were not contacted. Commands are in the revision notes.
+\end{document}

@@ -255,3 +255,15 @@ def test_weighted_count_under_threshold_refused_distinct_count_allowed(jrun):
 def test_aggregate_of_an_expression_of_the_protected_column_refused(jrun, sql):
     sig = PurposeMonitor(jpolicy(linear_audit=True), "finance", executor=jrun).check(sql)
     assert sig.refuse, sig.reasons
+
+
+def test_exact_rank_matches_float_on_the_weighted_join(jrun):
+    from guardrail.purpose import ExactLinearAuditor, LinearAuditor
+    pol = jpolicy(linear_audit=True, exact_linear=True)
+    m = PurposeMonitor(pol, "finance", executor=jrun)
+    assert not m.check(JOINED).refuse
+    assert m.check(PLAIN).refuse
+    # weights (3,1,1) and (1,1,1) determine customer 1; both auditors agree
+    sets = [{1: 3, 2: 1, 3: 1}, {1: 1, 2: 1, 3: 1}]
+    assert set(ExactLinearAuditor().disclosed(sets)) == {1}
+    assert set(LinearAuditor().disclosed(sets)) == {1}
