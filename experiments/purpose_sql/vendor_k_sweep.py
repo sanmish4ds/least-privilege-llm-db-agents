@@ -24,8 +24,15 @@ HAVING COUNT(*) >= :k;
 """
 
 COMMANDS = {
-    "snowflake": "SNOWFLAKE_ACCOUNT=... python experiments/purpose_sql/vendor_k_sweep.py --execute snowflake",
-    "bigquery": "BIGQUERY_PROJECT=... python experiments/purpose_sql/vendor_k_sweep.py --execute bigquery",
+    "snowflake": (
+        "export SNOWFLAKE_ACCOUNT= SNOWFLAKE_USER= SNOWFLAKE_PASSWORD= "
+        "SNOWFLAKE_WAREHOUSE= SNOWFLAKE_DATABASE= SNOWFLAKE_SCHEMA= && "
+        "python experiments/purpose_sql/vendor_k_sweep.py --execute snowflake"
+    ),
+    "bigquery": (
+        "export BIGQUERY_PROJECT= GOOGLE_APPLICATION_CREDENTIALS=/path/to/sa.json && "
+        "python experiments/purpose_sql/vendor_k_sweep.py --execute bigquery"
+    ),
 }
 
 

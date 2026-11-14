@@ -1,6 +1,70 @@
 # Revision notes
 
-The review was written against the Overleaf project, not the 5-page stand-in. That source is committed on its own (`Import the author's original PVLDB Overleaf source`) so the following commit is the diff. The TKDE manuscript was not edited.
+The review was written against the Overleaf project. That source is committed on its own. The TKDE manuscript was not edited.
+
+## Author decisions applied in the latest commit
+
+1. The conversational-risk arXiv citation and the "under review" journal sentence are removed, including the bib entry. The session-alarm section no longer depends on that paper.
+2. Paid calls were approved only under a $10 cap for gpt-4o and for the vendor runs. See the spend section. Nothing was executed.
+3. The repository is the source of truth. Manuscript numbers that had no log were removed, not kept beside a disclaimer.
+
+## Spend
+
+Actual spend: **$0**. No API key and no warehouse credentials are in this environment (`OPENAI_API_KEY`, `SNOWFLAKE_*`, `GOOGLE_APPLICATION_CREDENTIALS` are unset). No local model server is listening.
+
+### gpt-4o attacker: not run, estimate exceeds $10
+
+List price checked 14 Nov 2026 (OpenAI docs for `gpt-4o`): **$2.50 / 1M input tokens, $10 / 1M output tokens**.
+
+The approved run is 100 targets with a budget of 100 queries, one defense. That is 10,000 calls. A low assumption that still clears the cap: 1,500 input tokens and 200 output tokens per call, with no cache.
+
+- Input: 10,000 × 1,500 = 15M × $2.50/1M = **$37.50**
+- Output: 10,000 × 200 = 2M × $10/1M = **$20.00**
+- Total: **$57.50**
+
+A growing transcript (several thousand tokens by the later turns) is higher. Five defenses would multiply it. The run was not started.
+
+Command, once a budget above that estimate is approved and a key is present:
+
+```bash
+export OPENAI_API_KEY=...
+# The current harness caps episodes at 15 queries and reads the cache.
+# A 100-query run needs experiments/purpose_sql/adaptive_attack.py
+# invoked only after MAX_QUERIES is raised, for example:
+#   python experiments/purpose_sql/adaptive_attack.py --model gpt-4o --targets 100
+```
+
+### Snowflake and BigQuery: not run, no credentials
+
+Estimated cost on the 1,500-row table remains under $1, but there is nothing to authenticate with. `vendor_k_sweep.py --execute` still refuses to open a connection. When credentials exist:
+
+```bash
+export SNOWFLAKE_ACCOUNT= SNOWFLAKE_USER= SNOWFLAKE_PASSWORD= \
+  SNOWFLAKE_WAREHOUSE= SNOWFLAKE_DATABASE= SNOWFLAKE_SCHEMA=
+python experiments/purpose_sql/vendor_k_sweep.py --execute snowflake
+
+export BIGQUERY_PROJECT= GOOGLE_APPLICATION_CREDENTIALS=/path/to/sa.json
+python experiments/purpose_sql/vendor_k_sweep.py --execute bigquery
+```
+
+The script does not yet issue the k=3,5,10 queries even with those variables; it exits before connecting. Wiring the SQL is the author's next step after the keys are present. Do not treat the old Overleaf vendor table as a result.
+
+## Numbers removed because the repo has no log
+
+| Removed claim | Why |
+|---|---|
+| 471/2,942 checks over 1 s, maximum 231 s, and the 1,000,000-customer end-to-end table | Not in `experiments/results/mcp_e2e/`. The log that is there: 112 of 2,942 direct checks over 1 s, maximum 4.44 s, 150,000 customers. That is what the paper reports. |
+| Spider 2.0, including both Sonnet runs 27→18 and 27→20 | Only in `agent_numbers.tex` from Overleaf. No Spider result file. The claims are gone. |
+| BIRD agent table (admitted 93/41, sessions column, McNemar tests) | Only in `tables/agent.tex`. The committed BIRD log is `bird_benign.json`: 106 and 64 gold queries and the refusal rates in Table bird. |
+| Snowflake/BigQuery 30-target table | Only in `vendor_numbers.tex`. No warehouse log. |
+| Programmatic 200-target combination-test table, and the 2.2 ms vs 2.4 ms check times | Only in `new_numbers.tex` / `support_numbers.tex`. Not reported. |
+| Dense-basis timing at 1,000,000 entities (47 s, 4,000 MB) | Only in `scale_numbers.tex`. The scaling table stops at the committed 50,000-entity rows. |
+
+## What the paper now uses
+
+Finance-session audit rates, session-alarm rates, cached adaptive attackers, BIRD gold-query refusals, the Laplace baseline, the 150,000-customer MCP replay, and the 50,000-entity scaling rows: all from files under `experiments/results/`. The 100-target portfolio, the two-customer sum, the rational rank comparison, the DuckDB timings, and the Laplace-plus-noisy-count run: from the scripts added on this branch, via `revision_numbers.tex`.
+
+Compiled length after this pass: 12 pages total; the conclusion and the reference list both begin on page 11.
 
 Compiled with pdfLaTeX and the PVLDB Vol. 20 template: **14 pages total**. The conclusion is on page 12 and the reference list starts on page 13, so the body is 12 pages excluding references. Extra material is `paper/pvldb/appendix.tex` (not input by `main.tex`).
 

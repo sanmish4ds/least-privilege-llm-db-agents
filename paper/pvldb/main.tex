@@ -10,9 +10,6 @@
 \input{split_numbers.tex}
 \input{new_numbers.tex}
 \input{support_numbers.tex}
-\input{agent_numbers.tex}
-\input{vendor_numbers.tex}
-\input{scale_numbers.tex}
 \input{revision_numbers.tex}
 \newcommand{\pp}{\,pp}
 \makeatletter\newcommand{\tabinput}[1]{\@@input #1 }\makeatother
@@ -27,7 +24,7 @@
 \email{sanmish4@icloud.com}
 
 \begin{abstract}
-Agents built on large language models (LLMs) now write SQL against analytical databases for analysts. Some data, such as customer balances, may be released only in aggregate, and analytical databases enforce this one query at a time, for example with a minimum group size. But answers combine: two averages whose groups differ by one customer give that customer's balance. Through the aggregation controls of Snowflake and BigQuery, three differencing or padded-bisection attacks recovered every target's exact balance; a fourth, the sum of two customers, recovered that sum and not either balance. We present a \emph{session audit} in a gateway in front of the agent's SQL tool. It records which individuals each answer covered and refuses a query whose answer, combined with earlier ones, would determine one individual's value, or any linear function of fewer than $k$ individuals' values. Other answers are returned exactly. The guarantee is exact recovery, per identity, on a static snapshot. The decision is NP-complete in $k$ and was measured up to $k=5$. Behind the gateway the attacks above failed. That benign cost matches a per-query minimum group size on the large-group TPC-H mixes, and not on the finance sessions, where refused benign queries rise from \Nrefkthreestateless\% to \Nrefkthreelinear\% and sessions with a refusal from \Nhitkthreestateless\% to \Nhitkthreelinear\% (strict mode, \Nrefkthreestrict\%). On the BIRD questions the gateway admits, gpt-4o-mini lost no significant accuracy; two runs of Claude Sonnet~5.5 on Spider~2.0, model id \texttt{claude-sonnet-5-5}, went from 27 correct tasks to 18 and from 27 to 20.
+Agents built on large language models (LLMs) now write SQL against analytical databases for analysts. Some data, such as customer balances, may be released only in aggregate, and analytical databases enforce this one query at a time, for example with a minimum group size. But answers combine: two averages whose groups differ by one customer give that customer's balance. We present a \emph{session audit} in a gateway in front of the agent's SQL tool. It records which individuals each answer covered and refuses a query whose answer, combined with earlier ones, would determine one individual's value. Other answers are returned exactly. The guarantee is exact recovery, per identity, on a static snapshot. On the finance sessions the linear audit refuses \Nrefkthreelinear\% of benign queries and \Nhitkthreelinear\% of benign sessions, against \Nrefkthreestateless\% and \Nhitkthreestateless\% for a per-query minimum group size, and it stops the scripted differencing attacks that the minimum group size does not. A portfolio of \Nrevn{} targets and at most 100 queries, with no language model, recovered every target from that minimum group size and from nested pairs, and none from the linear audit. Snowflake and BigQuery were not measured here: this repository has no account for them. Cached attackers \texttt{gpt-4o-mini} (50 targets) and \texttt{gpt-4o} (25) disclosed no target under the linear audit. \texttt{claude-sonnet-5-5} refused the attacker role and sent no SQL.
 \end{abstract}
 \maketitle
 \vldbtopmatter
@@ -36,7 +33,7 @@ Agents built on large language models (LLMs) now write SQL against analytical da
 
 A retailer shares customer data with a marketing partner, or an HR team publishes pay statistics. In both cases the data may be used in aggregate but never per person. Analytical databases support this directly: Snowflake's aggregation policies, BigQuery's aggregation thresholds and AWS Clean Rooms' minimum aggregation refuse any answer whose group contains fewer than $k$ distinct individuals~\cite{snowflakeagg,bigqueryrules,awsminagg}. Increasingly, the queries come from an agent built on a large language model (LLM), which writes SQL, sends it to a database tool over the Model Context Protocol (MCP) and summarizes the answers. Such an agent writes many queries per task, reads every refusal and tries again, and can be steered by instructions hidden in text it reads~\cite{greshake2023indirect,pedro2025p2sql}.
 
-These controls judge each query on its own, but disclosure can come from a combination. Two averages whose groups differ by one customer reveal that customer's value, although each average covers many people. Statistical databases called this the tracker problem~\cite{denning1979tracker} and built audits for it~\cite{chin1982auditing,kenthapadi2005simulatable}, but those audits assumed a static query interface and never reached products. Vendors know the risk: Snowflake's documentation notes that a determined user with enough queries could work around its aggregation requirements~\cite{snowflakeagg}, and Google's that its analysis rules are not guaranteed to block every query designed to extract raw data~\cite{bigquerycleanrooms}. Their remedies are differential privacy with a query budget~\cite{snowflakedp,bigqueryrules,awsdp}, which makes every answer approximate, and pre-approved query templates~\cite{bigquerycleanrooms}, which rule out the free-form SQL an agent writes. Wang et al.\ name the same failure V8, lack of compositional leakage control: a policy that approves each query can still leak through a sequence of aggregates~\cite{dataagents2026}. Role-aware text-to-SQL benchmarks judge one query against a fixed role~\cite{jiang2026rbacsql,klisura2025schema}, and monitors for multi-turn attacks watch the dialogue~\cite{chen2025sequential,mishra2026cra}. None of this tracks what a session's exact SQL answers have already released. A journal version of the conversational-risk work is under review; the venue is for the author to confirm.
+These controls judge each query on its own, but disclosure can come from a combination. Two averages whose groups differ by one customer reveal that customer's value, although each average covers many people. Statistical databases called this the tracker problem~\cite{denning1979tracker} and built audits for it~\cite{chin1982auditing,kenthapadi2005simulatable}, but those audits assumed a static query interface and never reached products. Vendors know the risk: Snowflake's documentation notes that a determined user with enough queries could work around its aggregation requirements~\cite{snowflakeagg}, and Google's that its analysis rules are not guaranteed to block every query designed to extract raw data~\cite{bigquerycleanrooms}. Their remedies are differential privacy with a query budget~\cite{snowflakedp,bigqueryrules,awsdp}, which makes every answer approximate, and pre-approved query templates~\cite{bigquerycleanrooms}, which rule out the free-form SQL an agent writes. Wang et al.\ name the same failure V8, lack of compositional leakage control: a policy that approves each query can still leak through a sequence of aggregates~\cite{dataagents2026}. Role-aware text-to-SQL benchmarks judge one query against a fixed role~\cite{jiang2026rbacsql,klisura2025schema}, and monitors for multi-turn attacks watch the dialogue~\cite{chen2025sequential}. None of this tracks what a session's exact SQL answers have already released.
 
 Fig.~\ref{fig:example} shows the pattern in plain form. The agent asks for an average balance over a market segment in one nation, then the same average over the customers with keys below 1,400. Both are ordinary analyst questions, both cover a dozen customers, and a minimum group size of three admits both. Subtracting the two totals gives the balance of the one customer who is in the first group and not the second. The lower panel needs no arithmetic at all: a count that is 0 or 1 says whether one customer's balance is above a threshold, and halving the interval each time pins the balance to a cent in about 21 questions.
 
@@ -66,18 +63,18 @@ Fig.~\ref{fig:example} shows the pattern in plain form. The agent asks for an av
 
 Unlike a multi-turn jailbreak such as Crescendo~\cite{russinovich2025crescendo}, whose build-up a monitor can see in the dialogue~\cite{chen2025sequential}, every step here is innocuous text; the disclosure exists only in the arithmetic relation between answers. A defense therefore has to keep the answers, and specifically the sets of individuals behind them.
 
-This paper places a gateway between the agent and the database. The gateway enforces the aggregate-only rule and keeps a \emph{session audit}: for every answer that depends on a protected column it records which individuals the answer covered, and it refuses a query whose answer, alone or combined with earlier ones, would rest on fewer than $k$ individuals or determine one individual's value. In Fig.~\ref{fig:example}a the audit refuses the second question, because the two groups differ by one customer; in Fig.~\ref{fig:example}b it refuses the first, because the count depends on one customer's balance. Answers that single no one out are returned exactly. That query history matters is old: linear auditing of statistical databases decided it for sum queries over explicit index sets~\cite{chin1982auditing}. The claim of this paper is that this auditing, carried to the free-form SQL an agent writes, bounds exact linear disclosure from aggregate-only data. The benign cost equals a per-query minimum group size only on the large-group mixes of Section~\ref{sec:gap}.
+This paper places a gateway between the agent and the database. The gateway enforces the aggregate-only rule and keeps a \emph{session audit}: for every answer that depends on a protected column it records which individuals the answer covered, and it refuses a query whose answer, alone or combined with earlier ones, would rest on fewer than $k$ individuals or determine one individual's value. In Fig.~\ref{fig:example}a the audit refuses the second question, because the two groups differ by one customer; in Fig.~\ref{fig:example}b it refuses the first, because the count depends on one customer's balance. Answers that single no one out are returned exactly. That query history matters is old: linear auditing of statistical databases decided it for sum queries over explicit index sets~\cite{chin1982auditing}. The claim of this paper is that this auditing, carried to the free-form SQL an agent writes, bounds exact linear disclosure from aggregate-only data. On the finance sessions that costs more benign refusals than a per-query minimum group size (Section~\ref{sec:prevent}).
 
 The guarantee is narrower than the experiments: admitted sums and averages never determine any linear function of fewer than $k$ individuals' values, but filters on a protected column are audited without proof, and a refusal can depend on protected values. \emph{Strict mode} refuses those filters, so every decision depends on non-protected data only. Table~\ref{tab:guarantees} lists each SQL feature with what it releases, the result that covers it and what remains.
 
-On Snowflake and BigQuery, the vendors' own aggregation controls let three attacks recover every target's exact balance, and let a sum of two customers recover that sum for every target (Section~\ref{sec:gap}). On PostgreSQL with TPC-H data a per-query minimum group size let both differencing attacks recover all 200 target balances. Behind the gateway, every one of those attacks failed. The matching benign cost holds on the large-group mixes and not on the finance sessions (Section~\ref{sec:prevent}). This is evidence for the evaluated attacks, not a bound beyond Table~\ref{tab:guarantees}. Adaptive LLM attackers that read every refusal did not reach an exact value, and every weaker audit was defeated (Section~\ref{sec:adaptive}). A programmatic attacker that knows the rules and targets two-customer sums and threshold counts recovered nothing, and the combination test that stops it refused no additional benign query (Section~\ref{sec:attacker}).
+On the finance sessions a per-query minimum group size does not stop differencing, and the linear audit does (Section~\ref{sec:prevent}). A 100-target portfolio with no language model recovers every target from minimum group size and from nested pairs, and none from the linear audit (Section~\ref{sec:gap}). Cached LLM attackers that read every refusal did not reach an exact value under the linear audit (Section~\ref{sec:adaptive}). Snowflake and BigQuery were not run. This is evidence for the attacks in the repository, not a bound beyond Table~\ref{tab:guarantees}.
 
 This paper makes the following contributions:
 \begin{enumerate}
-\item \textbf{A measured gap in shipped controls.} At $k=3$, on 30 targets, three attacks recover an exact balance through Snowflake's and BigQuery's aggregation controls, and a sum of two customers recovers that sum (Section~\ref{sec:gap}). Runs at $k=5$ and $k=10$ were not done on the vendors.
+\item \textbf{A measured gap in per-query minimum group size.} On the finance sessions and on a 100-target portfolio, a minimum group size does not stop differencing. The linear audit does (Sections~\ref{sec:gap} and~\ref{sec:prevent}). Native Snowflake and BigQuery controls are not in this repository.
 \item \textbf{A session audit for free-form SQL.} The linear test is the classic audit expert~\cite{chin1982auditing}; what is new is the input and the small-support test. A rewrite turns free-form SQL, including joins, CTEs, filters on protected columns and conditional aggregates, into weighted sets of the individuals behind each answer. A combination test, pruned by a leverage bound, refuses answers that would determine any linear function of fewer than $k$ individuals' values. We prove both tests exact, show that the decision is NP-complete when $k$ is part of the input, and give a guarantee for each SQL feature (Sections~\ref{sec:audit} and~\ref{sec:guarantees}).
 \item \textbf{Evidence against scripted, adaptive and rule-aware attackers.} LLM attackers that adapt to refusals, a programmatic attacker aimed at the audit's known gaps, and a comparison with differential privacy (Sections~\ref{sec:prevent}--\ref{sec:dp}).
-\item \textbf{A deployable MCP gateway and its cost.} The audit runs on a read-only connection or as a proxy in front of an existing database MCP server; we measure it on human-written BIRD queries, Spider~2.0 tasks and end to end on PostgreSQL with up to 1,000,000 customers (Sections~\ref{sec:bird} and~\ref{sec:e2e}).
+\item \textbf{A deployable MCP gateway and its cost.} The audit runs on a read-only connection or as a proxy; we measure it on human-written BIRD gold queries and end to end on PostgreSQL at TPC-H scale factor 1 (Sections~\ref{sec:bird} and~\ref{sec:e2e}).
 \end{enumerate}
 
 \paragraph{Scope} The gateway does not decide which columns a user or task may see; the database's own controls do that. It does not detect prompt injection. It answers exactly or refuses. It assumes the gateway and the database account are not themselves compromised. The ledger is per authenticated identity and per static snapshot.
@@ -92,7 +89,7 @@ Database access control decides which rows and columns a user may see: role-base
 Answering only large-group aggregates is not enough: a tracker combines allowed queries to isolate an individual~\cite{denning1979tracker}, and limiting how much query sets overlap delays such a compromise without preventing it~\cite{dobkin1979secure}. The audit expert decides by linear algebra whether a set of answered sum queries determines an individual value~\cite{chin1982auditing}; exact auditing is computationally hard in general, even when the values are Boolean~\cite{kleinberg2003boolean}, and the early controls are compared in~\cite{adam1989security}. Enough noise-free aggregate answers allow reconstruction of a database~\cite{dinur2003revealing}, and refusals themselves can leak unless the audit decision is simulatable from public information~\cite{kenthapadi2005simulatable}. Differential privacy replaces exact answers with noisy ones~\cite{dwork2006calibrating} and has been engineered for SQL~\cite{johnson2018flex}; $k$-anonymity protects released tables rather than query streams~\cite{sweeney2002kanonymity}. Diffix, a SQL proxy that suppresses low counts and adds noise fixed per query condition~\cite{francis2017diffix}, was still defeated by differencing and reconstruction attacks~\cite{gadotti2019diffix,cohen2020reconstruction}, because its filter judges each query on its own. Auditing was later carried to SQL. SQL auditors find which past queries accessed specified data~\cite{agrawal2004auditing}, decide online whether a conjunctive query is suspicious~\cite{motwani2008auditing}, or make audit trails efficient for SQL with grouping and subqueries~\cite{kaushik2011auditing}. Online auditors exist for max and min queries and their utility for sums has been analyzed~\cite{nabar2006robustness,nabar2008survey}, and interval-based inference is intractable to audit for bounded integers and needs mathematical programming for bounded reals~\cite{li2002interval}. These SQL auditors decide whether a query accessed or depended on sensitive tuples; the linear auditors decide determinability for sum queries over explicit index sets. Our audit sits between them: it takes free-form SQL with joins, filters and conditional aggregates, derives the weighted entity sets behind each answer, and decides online, for exact answers, how few entities the session's answers can single out. The weight vector is the provenance polynomial of the aggregate, specialized to a sum~\cite{green2007provenance,buneman2001provenance}; we use it only to decide refusal. QuerySnout and QueryCheetah search for attribute-inference queries against systems that answer aggregates~\cite{cretu2022querysnout,stevanoski2024querycheetah}. The portfolio in the appendix is a much smaller, hand-specified set of those patterns, not their search. None of the classical audits was evaluated against agents that read refusals and adapt.
 
 \subsection{Security of LLM data agents}
-Wang et al.\ list V8, lack of compositional leakage control: a policy that approves each query never tracks what the answers reveal together~\cite{dataagents2026}. This paper is a defense for that channel, not a claim that the channel was unnamed. SafeNLIDB trains a model to refuse multi-turn aggregation inference~\cite{liu2026safenlidb}. SecureSQL finds that a chain-of-thought checker does not stop multi-turn leakage from LLMs used as database interfaces~\cite{song2024securesql}. Both checks are learned or prompted; this audit does not depend on the model. FactGate (first draft: SessionBound) accounts for released facts and states that inference from predicates is not bounded~\cite{wu2026factgate}. DPSQL+ pairs differential privacy with a minimum frequency~\cite{matsumoto2026dpsql}. PIMENTO does the same pairing for text~\cite{sadia2026pimento}. We do not run them. Spider, Spider~2.0 and BIRD are the text-to-SQL benchmarks used below~\cite{yu2018spider,lei2024spider2,li2023bird}.
+Wang et al.\ list V8, lack of compositional leakage control: a policy that approves each query never tracks what the answers reveal together~\cite{dataagents2026}. This paper is a defense for that channel, not a claim that the channel was unnamed. SafeNLIDB trains a model to refuse multi-turn aggregation inference~\cite{liu2026safenlidb}. SecureSQL finds that a chain-of-thought checker does not stop multi-turn leakage from LLMs used as database interfaces~\cite{song2024securesql}. Both checks are learned or prompted; this audit does not depend on the model. FactGate (first draft: SessionBound) accounts for released facts and states that inference from predicates is not bounded~\cite{wu2026factgate}. DPSQL+ pairs differential privacy with a minimum frequency~\cite{matsumoto2026dpsql}. PIMENTO does the same pairing for text~\cite{sadia2026pimento}. We do not run them. BIRD supplies the human-written queries below~\cite{li2023bird}.
 
 \subsection{Multi-turn attacks and agent authorization}
 Crescendo~\cite{russinovich2025crescendo} opens with an innocent question and asks the model to build on its own replies until it produces what it would have refused if asked directly; monitors that accumulate evidence across a decomposed request detect such attacks better than per-prompt filters~\cite{chen2025sequential}. Against prompt injection, CaMeL attaches capabilities to values derived from the trusted request~\cite{debenedetti2026camel}, Progent enforces per-task privilege policies on tool calls~\cite{shi2025progent}, FIDES propagates confidentiality labels through an agent's planner~\cite{costa2025fides}, and authorization architectures scope tool access per task and track authority consumed by earlier calls~\cite{authz2026agents,agenra2026}. In these systems a database answer is one opaque value, and what several answers reveal together about one row is outside the model. The gateway is complementary: it can be the database tool such a system calls.
@@ -324,7 +321,7 @@ Algorithm~\ref{alg:gateway} puts the policy check and the session audit together
 \end{algorithm}
 
 \subsection{Cost}
-Parsing and qualification are linear in the query size. Each rewrite costs one extra query whose result size is the number of matching rows. The linear test keeps $Q\in\mathbb{R}^{n\times r}$ over the $n$ entities touched so far and rank $r\le n$; adding a set costs $O(nr)$ with two Gram--Schmidt passes for stability, and Eq.~\ref{eq:linear} costs $O(nr)$. A query with more groups than a configurable limit (2,000 in our runs) is refused rather than audited. Table~\ref{tab:scaling} measures the check: \Nscalesmallms{} ms with 1,000 entities and rank 10, and \Nscalebigms{} ms with 50,000 entities and rank 500, where the dense basis takes \Nscalebigmb{} MB. With 1,000,000 entities a check takes \Nscalemmidms{} ms at rank 100, but \Nscalemms{} s at rank \Nscalemrank, where the \Nscalemmb{} MB basis strains a 16 GB machine; the dense basis is the limit at that size. In the finance sessions the basis reaches a median rank of \Nrankmed{} (at most \Nrankmax) by the end of a session. At $k=3$ the combination test examines at most $2r$ high-leverage entities against their candidates and raised the median check from \Nlinmed{} to \Npairmed{} ms on the finance sessions in Table~\ref{tab:attacker} (95th percentile 24~ms). The same test in the padded-sum experiment of Table~\ref{tab:support} has median \Nsupthreecombmed{} ms and 95th percentile 25~ms. The two figures are separate runs, not one measurement reported twice. Section~\ref{sec:attacker} also measures $k=4$ and $5$. Weights are integers, so the $10^{-9}$ test in Eq.~\ref{eq:linear} can be replaced by rational elimination. On \Nrevfloattrials{} random integer-weight trials the two agreed (\Nrevfloatmiss{} disagreements); on a constructed pair with entries near $10^{9}$ the floating-point test missed a disclosure the rational test caught (appendix). The rates in this paper were computed with the floating-point test.
+Parsing and qualification are linear in the query size. Each rewrite costs one extra query whose result size is the number of matching rows. The linear test keeps $Q\in\mathbb{R}^{n\times r}$ over the $n$ entities touched so far and rank $r\le n$; adding a set costs $O(nr)$ with two Gram--Schmidt passes for stability, and Eq.~\ref{eq:linear} costs $O(nr)$. A query with more groups than a configurable limit (2,000 in our runs) is refused rather than audited. Table~\ref{tab:scaling} measures the check: \Nscalesmallms{} ms with 1,000 entities and rank 10, and \Nscalebigms{} ms with 50,000 entities and rank 500, where the dense basis takes \Nscalebigmb{} MB. Those rows are the committed scaling log. A one-million-entity dense-basis timing is not in the repository, so it is not reported. Weights are integers, so the $10^{-9}$ test in Eq.~\ref{eq:linear} can be replaced by rational elimination. On \Nrevfloattrials{} random integer-weight trials the two agreed (\Nrevfloatmiss{} disagreements); on a constructed pair with entries near $10^{9}$ the floating-point test missed a disclosure the rational test caught (appendix). The rates below were computed with the floating-point test.
 
 \begin{table}[!t]
 \caption{Linear-audit check time (median of 5) and basis memory vs.\ entities $n$ and rank $r$, for random contiguous key-range sets (Python/NumPy, Apple M-series CPU, single process).}
@@ -335,7 +332,6 @@ Parsing and qualification are linear in the query size. Each rewrite costs one e
 $n$ & $r$ & Check (ms) & Basis (MB)\\
 \midrule
 \tabinput{tables/scaling.tex}
-\tabinput{tables/scaling_1m.tex}
 \bottomrule
 \end{tabular}
 \end{table}
@@ -346,7 +342,7 @@ $n$ & $r$ & Check (ms) & Basis (MB)\\
 The evaluation asks five questions, one per subsection: whether a per-query minimum group size suffices (RQ1), what each test prevents and costs (RQ2), whether the audit holds against adaptive and rule-aware attackers (RQ3), whether alarms or noise would do instead (RQ4), and what it costs in practice (RQ5).
 
 \subsection{Setup}\label{sec:evalmethod}
-\paragraph{Environment} Python~3.14, sqlglot~30.23 for parsing and qualification, SQLite and PostgreSQL~16, NumPy, and the MCP Python SDK~2.x. Model identifiers are the strings in the result files; dated API snapshots and the access date were not stored. \texttt{gpt-4o-mini} is the BIRD agent (temperature not separately recorded for that run; attackers use 0.7 with a per-episode seed) and an attacker: 50 targets, five defenses, at most 15 queries, and it issued SQL. \texttt{gpt-4o} is an attacker on 25 targets and four defenses in the ablation, and on the final gateway including strict mode; it issued SQL. \texttt{claude-sonnet-5-5} is the Spider~2.0 agent (effort medium in the run notes). Called as an attacker on one target and five defenses, it returned a refusal on the first turn of every episode and sent no SQL, so it contributes no attack result. No model is the judge: disclosure is the rank test. All prompts, model outputs and seeds that were cached are in the repository.
+\paragraph{Environment} Python~3.14, sqlglot~30.23, SQLite, PostgreSQL~16, NumPy, and the MCP Python SDK. Model ids are the strings in the cached attacker files; dated snapshots were not stored. \texttt{gpt-4o-mini} issued SQL on 50 targets and five defenses, at most 15 queries, temperature 0.7. \texttt{gpt-4o} issued SQL on 25 targets; strict mode was not in that file. \texttt{claude-sonnet-5-5}, called as an attacker on one target and five defenses, returned a refusal on the first turn of each and sent no SQL. No model judges disclosure: the rank test does.
 
 \paragraph{Data} \emph{PostgreSQL at scale.} TPC-H at scale factor~1 (150,000 customers) on PostgreSQL~16, with 200 random target customers and three benign workload mixes of 1,600 queries each.
 \emph{TPC-H sessions.} A seeded TPC-H-shaped SQLite database (1,500 customers, 7,500 orders, synthetic values) has four purposes and a session generator: \Nnbenign{} benign analyst sessions (400 per purpose) with realistic noise (30\% contain one query outside the purpose's columns; finance sessions include drill-downs and overlapping histogram bands) and \Nnattack{} attack sessions in five families (drift, small cell, two-query differencing, three-query differencing, enumeration; the figures call differencing ``tracker''). Every session has 6--16 queries regardless of label, so length carries no label information.
@@ -361,26 +357,24 @@ The evaluation asks five questions, one per subsection: whether a per-query mini
 \paragraph{Statistical reporting} For a proportion we report the 95\% Wilson score interval. Session-alarm thresholds are set per purpose on a held-out half of the benign sessions; detection rates are measured on the other half plus all attacks.
 
 \subsection{RQ1: Does a per-query minimum group size suffice?}\label{sec:gap}
-It does not: a minimum group size stops attacks that aggregate over few people, but differencing attacks recovered every target's exact balance, on PostgreSQL and against the aggregation controls of Snowflake and BigQuery, while the session audit stopped every attack.
+It does not, on the workload we can regenerate. Snowflake and BigQuery were not queried: the repository has no credentials for them, so this paper does not report a vendor result.
 
-We ran five attacks against 200 random target customers on PostgreSQL~16 at TPC-H scale factor~1, under three defenses: a broad reporting role with no aggregate rule, a per-query minimum group size of $k=3$ that counts distinct customers, and the gateway. Table~\ref{tab:gap} gives the results. The minimum group size refuses the AVG over one customer, the cell of one customer and every probe of the COUNT bisection, because each query rests on one customer. It admits both differencing attacks for all 200 targets, because each of their queries covers many customers. The session audit refuses all five.
-
-\paragraph{On Snowflake and BigQuery} Both vendors' controls, set to a minimum of $\Nsnowflakek$ customers (last four columns of Table~\ref{tab:gap}), stopped the single-customer AVG and the COUNT bisection: they suppress a too-small group, measured after the filter. BigQuery forbids comparisons on its privacy unit column, the customer key, so its attacker selects customers by name instead. Both admitted every differencing attack and a bisection that also counts 50 further customers unconditionally, which keeps every group large while the count still moves with the target's balance. Of the \Nsnowflakebypass{} attacks, the two differencing attacks and the padded bisection recovered every target's exact balance. The remaining attack, a sum of two customers, recovered that sum for every target and not either balance; Table~\ref{tab:gap} lists it separately from an exact balance. With the gateway in front, none of the four recovered its target quantity. A local check with no vendor account, on \Nrevn{} fresh sessions, agrees on the arithmetic: the two-customer sum matched the two balances in \Nrevpairsum{} sessions and put neither unit vector in the span (\Nrevpairexact{}; appendix).
-
-On three benign workload mixes the two controls refuse the same share of queries. These mixes run at scale factor~1, where groups hold hundreds of customers; on the smaller finance sessions of Section~\ref{sec:prevent}, where drill-downs differ by only a few customers, the session tests raise benign refusals from \Nrefkthreestateless\% to \Nrefkthreelinear\%, mostly in sessions that genuinely isolate one customer.
+Table~\ref{tab:gap} is a portfolio with no language model, \Nrevn{} targets, at most 100 queries, on 1{,}500 synthetic customers. With no audit, a one-customer sum recovers every target. A minimum group size at $k=3$, $5$, and $10$ refuses that sum and still loses every target to a segment complement, and a fresh session of threshold counts pins every balance. Nested pairs stop the complement and the bisection, and lose every target to three overlapping ranges. The linear audit recovers none (Wilson upper bound \Nrevwilson\%). A sum of two customers, in a fresh session with no minimum group size, matched the two balances in \Nrevpairsum{} of \Nrevn{} sessions and determined \Nrevpairexact{} of the customers. At $k=3$ the linear audit refused that query every time, because the group has size 2. The finance sessions in Section~\ref{sec:prevent} are the same comparison on the generated analyst workload: suppression refuses \Nrefkthreestateless\% of benign queries and stops \Nprevkthreestatelesstracker\% of two-query trackers; the linear audit refuses \Nrefkthreelinear\% and stops all of them.
 
 \begin{table}[!t]
-\caption{Per-query minimum group size vs.\ the session audit on PostgreSQL~16 (TPC-H scale factor~1), and each vendor's own control alone and behind the gateway (\emph{+audit}) on Snowflake and BigQuery. Upper part: targets for which the attack recovered the quantity it sought (an exact balance, except the sum-of-two row, which recovered the sum of two balances; bold: none). Lower part: benign queries refused in three workload mixes (mostly large groups / balanced / drill-down heavy; 1,600 each). \emph{Min-group}: a per-query minimum of $k=3$ customers with no memory.}
+\caption{Portfolio on 1{,}500 synthetic customers, \Nrevn{} targets, budget 100, no language model. \emph{Exact}: the target's unit vector lies in the span of admitted sums. \emph{Bisection}: a fresh session of threshold counts pins the integer balance.}
 \label{tab:gap}
-\centering\scriptsize
-\setlength{\tabcolsep}{2.4pt}
-\begin{tabular}{@{}lccccccc@{}}
+\centering\footnotesize
+\begin{tabular}{@{}lcc@{}}
 \toprule
-& \multicolumn{3}{c}{PostgreSQL} & \multicolumn{2}{c}{Snowflake} & \multicolumn{2}{c}{BigQuery}\\
-\cmidrule(lr){2-4}\cmidrule(lr){5-6}\cmidrule(lr){7-8}
-Attack & Broad & Min-group & Audit & Alone & +audit & Alone & +audit\\
+Defense & Exact & Bisection\\
 \midrule
-\tabinput{tables/gap.tex}
+No audit & \Nrevnone{} / \Nrevn{} & \Nrevnonebis{} / \Nrevn{}\\
+Minimum group, $k=3$ & \Nrevstatelesskthree{} / \Nrevn{} & \Nrevstatelesskthreebis{} / \Nrevn{}\\
+Minimum group, $k=5$ & \Nrevstatelesskfive{} / \Nrevn{} & \Nrevstatelesskfivebis{} / \Nrevn{}\\
+Minimum group, $k=10$ & \Nrevstatelesskten{} / \Nrevn{} & \Nrevstatelessktenbis{} / \Nrevn{}\\
+Nested pairs, $k=3$ & \Nrevpairwisekthree{} / \Nrevn{} & \Nrevpairwisekthreebis{} / \Nrevn{}\\
+Linear audit, $k=3$ & \Nrevlinearkthree{} / \Nrevn{} & \Nrevlinearkthreebis{} / \Nrevn{}\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -417,25 +411,21 @@ Strict & \Nprevkthreestricttracker\% & \Nprevkthreestricttrackerthree\% & \Nrefk
 \end{figure}
 
 \paragraph{Filter test and join weights}\label{sec:probes}
-Both are needed: each of the two scripted probes below succeeds when the corresponding rule is removed and fails when it is applied.
-
-\emph{Threshold probing.} Without the filter test, 21 counts of the form \texttt{COUNT(*) WHERE c\_custkey = 570 AND c\_acctbal > $t$} recovered the target's balance to the cent with no refusal. With the filter test the first probe is refused, since its candidate set holds one customer.
-
-\emph{Join fan-out.} Without the weights, two probes succeed. Sixteen admitted SUMs over \texttt{customer JOIN orders} in date windows where customers have different order counts, plus those counts, determined customer 570's balance within 227 queries; a \texttt{COUNT(*)} bisection over a window where the target has three orders and two others one each recovered it in 21 probes. With weights, the first attack leaves the value undetermined after 1{,}192 queries (334 refused); the equal-weight rule refuses the second at its first probe.
+The regression tests check both rules. A count of the form \texttt{COUNT(*) WHERE c\_custkey = 570 AND c\_acctbal > $t$} has a candidate set of one customer, so the filter test refuses the first probe. A \texttt{SUM} over \texttt{customer JOIN orders} is a weighted sum; the tests refuse the query that, together with the unweighted sum of the same customers, determines one balance, and they refuse a predicate \texttt{COUNT(*)} that counts those customers unequally. Query totals from an earlier unlogged probe are not repeated here.
 
 \subsection{RQ3: Does it hold against attackers that adapt or know its rules?}\label{sec:adaptive}
-For exact disclosure it does: under the linear audit no adaptive LLM attacker disclosed a target, while every weaker defense was defeated, and an attacker that knows the rules is stopped once the combination test is added.
+For exact disclosure it does on the cached attackers: under the linear audit no target was disclosed, and every weaker defense in those files was defeated. The rule-aware evidence in this repository is the portfolio in Section~\ref{sec:gap}, not a separate combination-test study.
 
-We ran \Nadvnm{} targets per defense with gpt-4o-mini and \Nadvno{} with gpt-4o; gpt-4o was run in strict mode only against the final gateway. Fig.~\ref{fig:adaptive} and Table~\ref{tab:adaptive} report disclosure as decided by the oracle.
+We ran \Nadvnm{} targets per defense with gpt-4o-mini and \Nadvno{} with gpt-4o. Fig.~\ref{fig:adaptive} and Table~\ref{tab:adaptive} report disclosure as decided by the oracle. gpt-4o has no strict-mode file.
 
 Every defense weaker than the linear audit was defeated. With the aggregate-only rule alone, both attackers succeed almost always, usually with one AVG over a single key. The stateless audit stops direct isolation but not differencing. The pairwise audit is defeated by combinations it does not model, such as overlapping key ranges. It was defeated more often than the stateless audit, though not significantly (Fisher's exact test, $p=\Nfisherm$ and $\Nfishero$).
 
 Under the linear audit no target was disclosed by either attacker: 0 of \Nadvnm{} and 0 of \Nadvno{}, with upper 95\% bounds of \Nadvmlinearhi\% and \Nadvolinearhi\%. Strict mode gives \Nadvmstrict\% disclosure for gpt-4o-mini, with refusals that by Proposition~\ref{prop:strict} carry no information about balances.
 
-We then ran both attackers against the final gateway, with and without strict mode, on the same targets. No target was disclosed (upper 95\% bounds \Nfinmlphi\% and \Nfinolphi\%), and no answer set determined any combination of the target with one other customer, which is what the combination test protects at $k=3$. The attackers met more refusals (\Nfinmlpref{} per gpt-4o-mini episode) and none stopped early with a correct answer.
+The cached files stop at the linear and strict rows above. A separate ``final gateway'' arm is not in those files, so it is not reported.
 
 \begin{table}[!t]
-\caption{Adaptive LLM attackers. Upper part: an ablation that adds one test at a time, run without the filter test or fail-closed handling. Lower part: the final gateway of Section~\ref{sec:method}, with the combination test, filter test and fail-closed handling. \emph{Disclosed}: share of targets whose exact balance the returned answers determine. \emph{Refusals}: mean refusals per episode. Each pair is gpt-4o-mini (\Nadvnm{} targets) / gpt-4o (\Nadvno{} targets).}
+\caption{Cached adaptive attackers. \emph{Disclosed}: share of targets whose exact balance the returned answers determine. \emph{Refusals}: mean per episode. Each pair is gpt-4o-mini (\Nadvnm{} targets) / gpt-4o (\Nadvno{} targets). gpt-4o has no strict-mode file.}
 \label{tab:adaptive}
 \centering\footnotesize
 \begin{tabular}{@{}lcc@{}}
@@ -447,9 +437,6 @@ Stateless audit & \Nadvmstateless\% / \Nadvostateless\% & \Nadvmstatelessrefusal
 Pairwise audit & \Nadvmpairwise\% / \Nadvopairwise\% & \Nadvmpairwiserefusals{} / \Nadvopairwiserefusals\\
 Linear audit & \Nadvmlinear\% / \Nadvolinear\% & \Nadvmlinearrefusals{} / \Nadvolinearrefusals\\
 Strict mode & \Nadvmstrict\% / -- & \Nadvmstrictrefusals{} / --\\
-\midrule
-Final gateway & \Nfinmlpdisc\% / \Nfinolpdisc\% & \Nfinmlpref{} / \Nfinolpref\\
-Final gateway, strict & \Nfinmspdisc\% / \Nfinospdisc\% & \Nfinmspref{} / \Nfinospref\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -461,44 +448,10 @@ Final gateway, strict & \Nfinmspdisc\% / \Nfinospdisc\% & \Nfinmspref{} / \Nfino
 \end{figure}
 
 \paragraph{An attacker that knows the rules}\label{sec:attacker}
-Without the combination test it does not: a programmatic attacker recovered sums and differences of two customers' balances for every target, and exact balances through threshold counts. With the combination test every attack failed, and no benign query was refused that the linear audit admitted.
-
-The LLM attackers do not know how the audit decides. We wrote an attacker that does and aims at the gaps Section~\ref{sec:guarantees} leaves: the two-customer sum and difference of Section~\ref{sec:audit}, and threshold counts on two overlapping groups $\{t,a,b\}$ and $\{a,b,c\}$. The third attack bisects \texttt{COUNT(*)} at each rank to recover the sorted balances of each group, about \Nprogthreshq{} queries per target, and takes the multiset difference, which is $x_t$. Each attack ran on \Nprogn{} random targets (\Nprognthresh{} for the third) on the TPC-H sessions' database at $k=3$. Table~\ref{tab:attacker} gives the results. Strict mode stops the threshold attack, since it refuses every filter on balances, but not the other two, which use only sums. The combination test stops all three: the first two because their answers determine $x_t+x_u$ or $x_t-x_u$, and the third because the two candidate sets differ by two customers. On the finance sessions it refused no further benign query.
-
-A separate portfolio, with no language model, spent at most 100 queries on each of \Nrevn{} targets drawn from 1,500 synthetic customers (appendix). Minimum group size at $k=3$, $5$ and $10$ lost every target to a segment complement, and nested pairs lost every target to a three-range overlap. The linear audit recovered none (Wilson upper bound \Nrevwilson\%). The mutation step added no recovery beyond those named patterns, so this is not a QuerySnout-style discovery.
-
-\begin{table}[!t]
-\caption{Programmatic attacker that knows the audit's rules, $k=3$: targets whose value the attack recovered exactly (sum or difference for the first two rows, the balance itself for the third; bold: none). Lower part: cost on the benign finance sessions.}
-\label{tab:attacker}
-\centering\scriptsize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}lccc@{}}
-\toprule
-Attack & Linear & Strict & Linear + combination\\
-\midrule
-\tabinput{tables/attacker.tex}
-\bottomrule
-\end{tabular}
-\end{table}
-
-Larger $k$ asks the combination test to look further. The same three queries with $m$ targets, padded with groups of $k$ customers so that the small-cell test admits them, reveal the sum of $m$ balances; it must be refused when $m<k$. Table~\ref{tab:support} runs this attack on \Nsupn{} target sets for $k=3,4,5$ and $m=2,3,4$. Checking pairs only, as Eq.~\ref{eq:pairtest} does, misses the three- and four-customer sums at $k=4$ and $5$; the full combination test refuses every attack with $m<k$ and admits every one with $m\ge k$, which rests on enough customers. On the benign finance sessions it refused no query that the linear audit admitted: \Nsupfourcombref\% and \Nsupfivecombref\% of queries at $k=4$ and $5$, the same as the linear audit alone, where the higher rate at $k=5$ comes from the small-cell test. The median check stayed at \Nsupfourcombmed{} and \Nsupfivecombmed{} ms.
-
-\begin{table}[!t]
-\caption{Sum of $m$ customers' balances from three padded SUMs, at minimum size $k$: target sets recovered out of \Nsupn{}, checking pairs only / with the full combination test (bold: none). Right: benign finance queries refused (pairs / full) and check time of the full test.}
-\label{tab:support}
-\centering\scriptsize
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{@{}lccccc@{}}
-\toprule
-$k$ & $m=2$ & $m=3$ & $m=4$ & Refused (\%) & ms (med / 95th)\\
-\midrule
-\tabinput{tables/support.tex}
-\bottomrule
-\end{tabular}
-\end{table}
+The cached LLM attackers were not told the audit's algebra. The portfolio in Section~\ref{sec:gap} was: it uses the segment complement, the three-range overlap, and threshold bisection, and it is the measurement in this repository. A 200-target scripted study of two-customer sums under a combination test is not in the repository, so those counts are not reported. The two-customer sum that is reported determined neither customer when it was answered, and the linear audit at $k=3$ refused it.
 
 \subsection{RQ4: Would alarms or noise do instead?}\label{sec:alarms}
-Session alarms do not replace the audit for differencing, and Laplace noise does not replace it when the answer must be exact. The two are complements. Session signals separate the attacks that show in the shape of a session, and they miss differencing, because honest sessions produce the same pattern. The length-matched design and the guard and row-ledger baselines are the SQL analogue of conversational risk scores~\cite{mishra2026cra}; this section does not reuse that paper's dialogue data. A journal version of that work is under review.
+Session alarms do not replace the audit for differencing, and Laplace noise does not replace it when the answer must be exact. The two are complements. Session signals separate the attacks that show in the shape of a session, and they miss differencing, because honest sessions produce the same pattern. The sessions are length-matched, so a high score is not a long session.
 
 We computed the AUROC of every signal for every attack family against held-out benign sessions of the same purpose. Session length carries no label information (query-count AUROC \Naucdriftqueries--\Naucenumerationqueries). Three families are separated almost perfectly by the signal that measures their mechanism: drift by use of columns outside the purpose, enumeration by breadth, and small cells by the per-query cell test.
 
@@ -549,9 +502,9 @@ Linear audit, $k=3$ & 0\% & 100\% & \Nrefkthreelinear\% & \Ndpauditatt\%\\
 \end{table}
 
 \subsection{RQ5: What does it cost on human-written queries and in deployment?}\label{sec:bird}
-Little on short questions, more on long analytical ones. On human-written queries the audit costs only its per-query rules: the stateful tests refused nothing more, and the median check takes under a millisecond. LLM agents answering the same questions through the gateway lost no significant accuracy on questions it admits, while their correct answers to questions about one customer fell to zero. On longer Spider~2.0 tasks a stronger agent solved a quarter fewer behind the gateway, because those tasks take ratios, clamps or rankings of totals over one or a few people.
+On BIRD's gold queries the audit costs only its per-query rules: the stateful tests refused nothing more. An agent re-asking those questions, and Spider~2.0, are not in this repository, so this paper does not report them.
 
-Here we replace the generated workloads with BIRD's human-written queries, under an analytics purpose that permits every column except per-entity amounts and balances, which may only be aggregated. Fig.~\ref{fig:bird} and Table~\ref{tab:bird} report the results.
+Fig.~\ref{fig:bird} and Table~\ref{tab:bird} use the committed BIRD log: \Nfinnq{} \texttt{financial} queries and \Ndebitnq{} \texttt{debit\_card\_specializing} queries, one audit version.
 
 The linear audit refuses \Nfinreflinear\% of queries on \texttt{financial} and \Ndebitreflinear\% on \texttt{debit\_card\_specializing}, and in both databases the stateless audit refuses the same share. The higher rate on the debit-card database reflects its questions, many of which ask for one customer's consumption; under an aggregate-only purpose those are disclosures by design, so the rate measures policy fit, not audit error.
 
@@ -572,33 +525,13 @@ Refused: stateless audit & \Nfinrefstateless\% & \Ndebitrefstateless\%\\
 Refused: linear audit & \Nfinreflinear\% & \Ndebitreflinear\%\\
 \quad with conditional split & \Nfinrefsplit\% & \Ndebitrefsplit\%\\
 Refused: strict mode & \Nfinrefstrict\% & \Ndebitrefstrict\%\\
-Entity sets computed & \Nfincovfinal\% & \Ndebitcovfinal\%\\
+Entity sets computed & \Nrevfincov\% & \Nrevdebitcov\%\\
 Check time, ms (median / 95th) & \Nfinlatmed{} / \Nfinlatp & \Ndebitlatmed{} / \Ndebitlatp\\
 Query time, ms (median / 95th) & \Nfinqmed{} / \Nfinqp & \Ndebitqmed{} / \Ndebitqp\\
 \midrule
 Queries refused alone & \Nfinsingle & \Ndebitsingle\\
 \quad without the filter test & \Nfinsingleold & \Ndebitsingleold\\
 \quad with conditional split & \Nfinsinglesplit & \Ndebitsinglesplit\\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\paragraph{Agents doing the tasks} An agent that is refused can rephrase, so we gave \Nagmodel{} each BIRD question with its schema and hint, let it run up to \Nagturns{} queries and see rows or the gateway's refusal reason, and scored its final query by BIRD's execution accuracy (same result set as the gold query). Table~\ref{tab:agent} compares an open read-only database with the gateway, each with and without the gateway's rules stated in the prompt, and the gateway with questions grouped into sessions of 6--16. We report the \Nagadmn{} questions whose gold query the gateway admits alone and the \Nagonen{} that ask for one entity's value (classified as above), and test paired differences with an exact McNemar test.
-
-Without the rules in the prompt, the gateway did not significantly lower accuracy on the questions it counts as admitted (\Naggatenradmfrom\% to \Naggatenradmto\%, $p=\Naggatenradmp$), while correct answers to one-entity questions fell to \Naggatenroneto\%, as intended (Table~\ref{tab:agent}). Accuracy over all \Nfinnq+\Ndebitnq{} gold queries is not recoverable: Table~\ref{tab:agent} scores \Nagadmn{} admitted plus \Nagonen{} one-entity questions ($161$), not $170$, and $106-16=90$ plus $64-24=40$ under the conditional split, not the hardcoded 93 and 41. The two cuts are left as stored. The rules prompt lowered admitted accuracy with no gateway ($p=\Nagpromptadmp$). ``Gateway, sessions'' matches ``Gateway, rules'' and not ``Gateway'' (50\% vs.\ 41\% admitted on \texttt{financial}). The files do not say whether the session run included the rules.
-
-\paragraph{Enterprise-style tasks} On \Nspn{} Spider~2.0 SQLite tasks~\cite{lei2024spider2}, \texttt{gpt-4o-mini} solved \Nspothopenc{} of \Nspothn{} tasks that do not ask for one person. \texttt{agent\_numbers.tex} has two \texttt{claude-sonnet-5-5} runs. Open access solved \Nssothopenc{} both times. Behind the gateway the runs solved \Nssothgatec{} ($p=\Nssgatenrothp$, \Nsslost{} lost, \Nsslostshape{} a non-linear step on a small total) and \Nsnothgatec{} ($p=\Nsngatenrothp$, \Nsnlost{} lost, \Nsnlostshape{} of that shape). An earlier draft reported only $27\to20$. The losses are ratios, clamps or rankings of small totals, which are not sums. Of \Nsnentn{} tasks that ask for individuals, the second run solved \Nsnentopenc{} with open access and \Nsnentgatec{} behind the gateway, both via an unprotected price column.
-
-\begin{table}[!t]
-\caption{LLM agents (\Nagmodel, up to \Nagturns{} queries) answering BIRD questions: execution accuracy (\%) by condition. \emph{Admitted}: gold query admitted alone. \emph{One-entity}: asks for one entity's value. Rules: stated in the prompt.}
-\label{tab:agent}
-\centering\scriptsize
-\setlength{\tabcolsep}{2.5pt}
-\begin{tabular}{@{}lccccc@{}}
-\toprule
- & Open & \makecell{Open,\\rules} & \makecell{Gateway,\\rules} & Gateway & \makecell{Gateway,\\sessions}\\
-\midrule
-\tabinput{tables/agent.tex}
 \bottomrule
 \end{tabular}
 \end{table}
@@ -610,10 +543,10 @@ Without the rules in the prompt, the gateway did not significantly lower accurac
 \end{figure}
 
 \paragraph{Deployment over MCP}\label{sec:e2e}
-We loaded the TPC-H-shaped schema into PostgreSQL~16 at scale factor 1, generated \Neesessions{} benign and attack sessions (\Neequeries{} queries), and replayed them through two deployment paths: the gateway executing on Postgres itself, and the gateway forwarding to a separate database MCP server. Every attack in all five families was refused at or before its disclosing query. The median check took \Needirchkmed{} ms against a median query execution of \Needirexmed{} ms. We replayed the same sessions on a load with 1,000,000 customers and 10,000,000 orders. Decisions still matched the library on every query and every attack was refused, and the median check stayed at \Neemchkmed{} ms. The tail is the deployment bottleneck: on the direct path \Neemoverone{} of \Neemn{} checks took over a second, \Neemoverten{} over ten seconds and the slowest \Neemmax{}~s, as recorded in \texttt{scale\_numbers.tex}. All of them came from the finance purpose, and \Neemslowwhole{} were grouped averages of balances over every customer, whose check ships all 1,000,000 keys and audits sets of that size. The committed PostgreSQL log does not contain this tail (\Nrevlogover{} of \Nrevlogn{} checks over 1~s, maximum \Nrevlogmax{}~s, smaller load). The author should supply the 1,000,000-customer log. A DuckDB measurement is not a substitute: key weights for one nation took \Nrevduckms{}~ms, and \Nrevduckhist{} short range updates peaked at \Nrevduckmax{}~ms (appendix).
+We loaded the TPC-H-shaped schema into PostgreSQL~16 at scale factor 1 (150{,}000 customers), generated \Neesessions{} sessions (\Neequeries{} queries), and replayed them through the gateway and through a second MCP hop. Every attack family was refused at or before its disclosing query, and every decision matched the library. Table~\ref{tab:e2e} is that log. On the direct path \Nrevlogover{} of \Nrevlogn{} checks took over one second and the slowest took \Nrevlogmax{}~s. A one-million-customer replay is not in the repository. A separate DuckDB timing, not that missing run, aggregated key weights for one nation of a million-customer table in \Nrevduckms{}~ms, and \Nrevduckhist{} short range updates peaked at \Nrevduckmax{}~ms (appendix). Medians of check, execute, and transport do not add to the median round trip: on the queries that executed, the three medians sum to \Nrevsummed{}~ms and the median round trip is \Nrevrtexec{}~ms.
 
 \begin{table}[!t]
-\caption{End-to-end MCP deployment on PostgreSQL with the TPC-H-shaped schema at two sizes (\Neesessions{} sessions, \Neequeries{} queries each). \emph{Parity}: decisions equal to the in-process library. Times in ms, median / 95th percentile; \emph{Transport}: round trip minus check and execution, median.}
+\caption{End-to-end MCP deployment on PostgreSQL, TPC-H scale factor 1 (\Neesessions{} sessions, \Neequeries{} queries). \emph{Parity}: decisions equal to the in-process library. Times in ms, median / 95th percentile.}
 \label{tab:e2e}
 \centering\scriptsize
 \setlength{\tabcolsep}{2.5pt}
@@ -622,11 +555,7 @@ We loaded the TPC-H-shaped schema into PostgreSQL~16 at scale factor 1, generate
 \toprule
 Path & Parity & Check & Execute & Transport & Round trip\\
 \midrule
-\multicolumn{6}{@{}l}{\emph{150,000 customers (scale factor 1)}}\\
 \tabinput{tables/e2e.tex}
-\midrule
-\multicolumn{6}{@{}l}{\emph{1,000,000 customers}}\\
-\tabinput{tables/e2e_1m.tex}
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -638,12 +567,12 @@ Path & Parity & Check & Execute & Transport & Round trip\\
 As an MCP proxy the gateway leaves agents and databases unchanged. A deployment chooses the account, the protected columns, $k$, strict mode and log retention, and should not describe the audit's rules to the agent (Section~\ref{sec:bird}).
 
 \subsection{Limitations}\label{sec:limits}
-\paragraph{What the audit does not guarantee} Propositions~\ref{prop:linear} and~\ref{prop:pair} rule out exact linear disclosure of fewer than $k$ entities; Theorem~\ref{thm:hard} makes the combination test exponential in $k$, and we measured it only up to $k=5$. Intervals are not bounded~\cite{li2002interval} (none narrowed in Table~\ref{tab:dp}). Filters can reveal the multiset of a group of size at least $k$; only strict mode removes that. The small-cell test ignores row weights. Table~\ref{tab:guarantees} lists the rest.
+\paragraph{What the audit does not guarantee} Propositions~\ref{prop:linear} and~\ref{prop:pair} rule out exact linear disclosure of fewer than $k$ entities. The finance-session modes were measured at $k\in\{2,3,5\}$. Intervals are not bounded~\cite{li2002interval} (none narrowed in Table~\ref{tab:dp}). Filters can reveal the multiset of a group of size at least $k$; only strict mode removes that. Table~\ref{tab:guarantees} lists the rest.
 
-\paragraph{Adaptive study and validity} The adaptive study has \Nadvnm{} and \Nadvno{} targets (upper 95\% bounds \Nadvmlinearhi\% and \Nadvolinearhi\%), a budget of 15 queries, and no threshold bisection; \texttt{claude-sonnet-5-5} declined the attacker role. The ablation rows omit the filter test; three unaudited \texttt{UNION ALL} queries do not change those disclosure bits. We authored the TPC-H sessions, the attacks and the 100-target portfolio. Spider~2.0 labels and protected columns were proposed by a model; a second labelling agreed on \Nlcagree{} of \Nlcn{} ($\kappa=\Nlckappa$) and the author checked them, and no one else did. Vendor runs are $k=3$ only. The $10^{-9}$ test is not a proof near weights of $10^{9}$. Intervals, cross-threshold filters and collusion are outside the proof; strict mode refuses the filter channel at \Nrefkthreestrict\% of benign finance queries. The 1,000,000-customer tail is from \texttt{scale\_numbers.tex}, not the committed PostgreSQL log. AWS Clean Rooms was not run.
+\paragraph{Validity} The adaptive study has \Nadvnm{} and \Nadvno{} targets (upper bounds \Nadvmlinearhi\% and \Nadvolinearhi\%), a budget of 15, and no bisection; \texttt{claude-sonnet-5-5} sent no attack SQL. We authored the TPC-H sessions and the 100-target portfolio. BIRD here is gold SQL, not an agent re-asking the questions. Snowflake, BigQuery, Spider~2.0, and a one-million-customer PostgreSQL replay are not in the repository. The $10^{-9}$ test misses a constructed case near weights of $10^{9}$. Strict mode refuses \Nrefkthreestrict\% of benign finance queries.
 
 \section{Conclusion}\label{sec:conclusion}
-The session audit refuses the query that would make one person's protected value, or a linear function of fewer than $k$ people's values, exact. On large groups its benign cost matches a per-query minimum group size; on the finance sessions it does not (\Nrefkthreestateless\% to \Nrefkthreelinear\% of queries). Three vendor attacks recovered every target's exact balance, and a sum of two customers recovered that sum. Behind the gateway those attacks failed. Two Spider~2.0 runs of \texttt{claude-sonnet-5-5} went from 27 to 18 and from 27 to 20. The bound is exact recovery, per identity, on a static snapshot.
+The session audit refuses the query that would make one person's protected value exact. On the finance sessions that refuses \Nrefkthreelinear\% of benign queries, against \Nrefkthreestateless\% for a per-query minimum group size, and a 100-target portfolio that defeats the minimum group size recovers nothing from the linear audit. A sum of two customers, when answered, is a sum. The bound is exact recovery, per identity, on a static snapshot. Vendor warehouses and Spider~2.0 were not measured in this repository.
 
 \bibliographystyle{ACM-Reference-Format}
 \bibliography{references}

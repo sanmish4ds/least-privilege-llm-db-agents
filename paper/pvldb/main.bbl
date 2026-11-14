@@ -2,7 +2,7 @@
 %%% Do NOT edit. File created by BibTeX with style
 %%% ACM-Reference-Format-Journals [18-Jan-2012].
 
-\begin{thebibliography}{58}
+\begin{thebibliography}{55}
 
 %%% ====================================================================
 %%% NOTE TO THE USER: you can override these defaults by providing
@@ -460,25 +460,6 @@
 \showDOI{\tempurl}
 
 
-\bibitem[\protect\citeauthoryear{Lei, Chen, Ye, Cao, Shin, Su, Suo, Gao, Hu,
-  Yin, Zhong, Xiong, Sun, Liu, Wang, and Yu}{Lei et~al\mbox{.}}{2024}]%
-        {lei2024spider2}
-\bibfield{author}{\bibinfo{person}{Fangyu Lei}, \bibinfo{person}{Jixuan Chen},
-  \bibinfo{person}{Yuxiao Ye}, \bibinfo{person}{Ruisheng Cao},
-  \bibinfo{person}{Dongchan Shin}, \bibinfo{person}{Hongjin Su},
-  \bibinfo{person}{Zhaoqing Suo}, \bibinfo{person}{Hongcheng Gao},
-  \bibinfo{person}{Wenjing Hu}, \bibinfo{person}{Pengcheng Yin},
-  \bibinfo{person}{Victor Zhong}, \bibinfo{person}{Caiming Xiong},
-  \bibinfo{person}{Ruoxi Sun}, \bibinfo{person}{Qian Liu},
-  \bibinfo{person}{Sida Wang}, {and} \bibinfo{person}{Tao Yu}.}
-  \bibinfo{year}{2024}\natexlab{}.
-\newblock \bibinfo{title}{{Spider 2.0: Evaluating Language Models on Real-World
-  Enterprise Text-to-SQL Workflows}}.
-\newblock \bibinfo{howpublished}{arXiv:2411.07763}.
-\newblock
-\showeprint[arxiv]{2411.07763}~[cs.CL]
-
-
 \bibitem[\protect\citeauthoryear{Li, Hui, Qu, Yang, Li, Li, Wang, Qin, Cao,
   Geng, Huo, Zhou, Ma, Li, Chang, Huang, Cheng, and Li}{Li
   et~al\mbox{.}}{2023}]%
@@ -559,22 +540,6 @@
 \newblock
 \newblock
 \shownote{SQL Server documentation, accessed November 2026.}
-
-
-\bibitem[\protect\citeauthoryear{Mishra, Chukkapalli, and Naik}{Mishra
-  et~al\mbox{.}}{2026}]%
-        {mishra2026cra}
-\bibfield{author}{\bibinfo{person}{Sanjay Mishra}, \bibinfo{person}{Divya
-  Chukkapalli}, {and} \bibinfo{person}{Ganesh~R. Naik}.}
-  \bibinfo{year}{2026}\natexlab{}.
-\newblock \showarticletitle{{Stateful Guardrails for Multi-Turn LLM Systems: A
-  Conversational Risk Accumulation Framework}}.
-\newblock \bibinfo{journal}{\emph{arXiv preprint arXiv:2607.19361}}
-  (\bibinfo{year}{2026}).
-\newblock
-\newblock
-\shownote{A journal version is under review. The venue is for the author to
-  confirm.}
 
 
 \bibitem[\protect\citeauthoryear{Motwani, Nabar, and Thomas}{Motwani
@@ -859,27 +824,6 @@
 \newblock
 \newblock
 \shownote{Version 2. Version 1 was titled SessionBound.}
-
-
-\bibitem[\protect\citeauthoryear{Yu, Zhang, Yang, Yasunaga, Wang, Li, Ma, Li,
-  Yao, Roman, Zhang, and Radev}{Yu et~al\mbox{.}}{2018}]%
-        {yu2018spider}
-\bibfield{author}{\bibinfo{person}{Tao Yu}, \bibinfo{person}{Rui Zhang},
-  \bibinfo{person}{Kai Yang}, \bibinfo{person}{Michihiro Yasunaga},
-  \bibinfo{person}{Dongxu Wang}, \bibinfo{person}{Zifan Li},
-  \bibinfo{person}{James Ma}, \bibinfo{person}{Irene Li},
-  \bibinfo{person}{Qingning Yao}, \bibinfo{person}{Shanelle Roman},
-  \bibinfo{person}{Zilin Zhang}, {and} \bibinfo{person}{Dragomir Radev}.}
-  \bibinfo{year}{2018}\natexlab{}.
-\newblock \showarticletitle{{Spider: A Large-Scale Human-Labeled Dataset for
-  Complex and Cross-Domain Semantic Parsing and Text-to-SQL Task}}. In
-  \bibinfo{booktitle}{\emph{Proceedings of the 2018 Conference on Empirical
-  Methods in Natural Language Processing}}. \bibinfo{publisher}{Association for
-  Computational Linguistics}, \bibinfo{pages}{3911--3921}.
-\newblock
-\urldef\tempurl%
-\url{https://doi.org/10.18653/v1/d18-1425}
-\showDOI{\tempurl}
 
 
 \bibitem[\protect\citeauthoryear{Yueh-Han, Joshi, Chen, Andriushchenko, Angell,
